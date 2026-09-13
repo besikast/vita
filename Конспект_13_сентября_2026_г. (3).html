@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Опорный конспект — лол</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Times New Roman', 'Segoe UI', serif;
+        background: #eef2f7;
+        padding: 24px 20px;
+        color: #1a1a1a;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    .sheet {
+        max-width: 210mm;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+        padding: 18mm 14mm;
+        border: 2px solid #f5c518;
+    }
+    .header {
+        text-align: center;
+        border-bottom: 3px solid #1a1a1a;
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+    }
+    .header h1 {
+        font-size: 19px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .header .meta { font-size: 11px; color: #666; font-style: italic; }
+    .theme-block {
+        background: #1a1a1a;
+        color: #f5c518;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 5px solid #f5c518;
+    }
+    .theme-block .label { font-size: 9px; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .theme-block .value { font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .goal-block {
+        background: #fef9e6;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        border-left: 5px solid #f5c518;
+    }
+    .goal-block .label { font-size: 9px; color: #8a6d1e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .goal-block .value { font-size: 12px; font-weight: 600; line-height: 1.4; }
+    h2 {
+        font-size: 14px;
+        margin: 20px 0 8px 0;
+        padding: 5px 10px;
+        background: #f0f0f0;
+        border-left: 5px solid #1a1a1a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    h3 {
+        font-size: 12px;
+        margin: 12px 0 5px 0;
+        color: #333;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 2px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 12px 0;
+        font-size: 11px;
+    }
+    table th, table td {
+        border: 1px solid #999;
+        padding: 5px 7px;
+        vertical-align: middle;
+    }
+    table th {
+        background: #1a1a1a;
+        color: #f5c518;
+        font-weight: bold;
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+    table .lvl-num { width: 30px; text-align: center; font-weight: bold; background: #f5f5f5; }
+    table .check-cell { text-align: center; width: 40px; font-size: 15px; }
+    .filled { color: #1a1a1a; font-weight: bold; }
+    .filled.wrong { color: #b13e3e; text-decoration: line-through; }
+    .empty-line {
+        display: inline-block;
+        min-width: 140px;
+        border-bottom: 1px dashed #666;
+        height: 14px;
+    }
+    .info-list { font-size: 11px; line-height: 1.6; margin: 6px 0 12px 0; }
+    .info-list li { margin-left: 18px; margin-bottom: 2px; }
+    .fill-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 5px;
+        font-size: 11px;
+        flex-wrap: wrap;
+    }
+    .fill-row .label-text { white-space: nowrap; }
+    .final-grade {
+        background: #1a1a1a;
+        color: #f5c518;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .final-grade .label { font-size: 12px; font-weight: 600; }
+    .final-grade .value { font-size: 20px; font-weight: 800; }
+    .footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #ccc;
+        text-align: center;
+        font-size: 9px;
+        color: #888;
+        font-style: italic;
+    }
+    .print-btn {
+        display: block;
+        margin: 20px auto 0;
+        background: #1a1a1a;
+        color: #f5c518;
+        border: 2px solid #f5c518;
+        padding: 10px 28px;
+        border-radius: 60px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    .print-btn:hover { background: #f5c518; color: #1a1a1a; }
+    .legend {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin: 8px 0 14px 0;
+        font-size: 10px;
+        color: #666;
+    }
+    .legend b { color: #1a1a1a; }
+    .img-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 6px 0 10px 0;
+    }
+    .img-row img {
+        max-height: 100px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        padding: 3px;
+        background: #fafafa;
+    }
+    .img-caption {
+        font-size: 10px;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        margin-top: 2px;
+    }
+    @media print {
+        body { background: white; padding: 0; font-size: 11px; }
+        .sheet {
+            box-shadow: none;
+            border-radius: 0;
+            border: none;
+            padding: 8mm 10mm;
+            max-width: 100%;
+        }
+        .print-btn { display: none; }
+        h2 { page-break-after: avoid; }
+        table { page-break-inside: auto; }
+        tr { page-break-inside: avoid; }
+    }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+    <div class="header">
+        <h1>Опорный конспект занятия</h1>
+        <div class="meta">Дата: 13 сентября 2026 г. | Преподаватель: Ушакова Ю.И. | Специальность 09.02.06</div>
+    </div>
+
+    <div class="theme-block">
+        <div class="label">Тема занятия</div>
+        <div class="value">лол</div>
+    </div>
+
+    <div class="goal-block">
+        <div class="label">🎯 Цель занятия</div>
+        <div class="value">Изучение конструктивных особенностей кабелей «витая пара» и технологии изготовления патч-корда</div>
+    </div>
+
+    <div class="legend">
+        <b>Обозначения:</b> <span class="filled">жирный</span> — заполнено учеником; <span class="empty-line" style="min-width:80px;"></span> — поле для рукописной записи.
+    </div>
+
+    <!-- 1. OSI -->
+    <h2>1. 🏛️ Модель OSI</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Модель взаимодействия открытых систем — 7 уровней. Уровни 4–7 — справочные, уровни 1–3 нужно было заполнить.</p>
+
+    <h3>Уровни (от 7 к 1):</h3>
+    <table>
+        <thead><tr><th>№</th><th>Название уровня</th></tr></thead>
+        <tbody><tr><td class="lvl-num">7</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">6</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">5</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">4</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">3</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">2</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">1</td><td><span class="empty-line"></span></td></tr></tbody>
+    </table>
+
+    <h3>Оборудование по уровням 1–3:</h3>
+    <table>
+        <thead><tr><th>№</th><th>Оборудование / технологии</th></tr></thead>
+        <tbody><tr><td class="lvl-num">1</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">2</td><td><span class="empty-line"></span></td></tr><tr><td class="lvl-num">3</td><td><span class="empty-line"></span></td></tr></tbody>
+    </table>
+
+    <!-- 2. Диагностика -->
+    <h2>2. ⚠️ Диагностика сети</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Задача:</b> определить причину сбоя по индикаторам и показаниям тестера.</p>
+
+    <div class="img-row">
+        <img src="сетеваякарта.jpg" alt="Сетевая карта" style="max-width:100%; max-height:120px; border-radius:8px; border:1px solid #ccc;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EСетевая карта%3C/text%3E%3C/svg%3E';">
+        <img src="коммутатор.jpg" alt="Коммутатор" style="max-width:100%; max-height:120px; border-radius:8px; border:1px solid #ccc;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EКоммутатор%3C/text%3E%3C/svg%3E';">
+        <img src="тестер.jpg" alt="Кабельный тестер" style="max-width:100%; max-height:120px; border-radius:8px; border:1px solid #ccc;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EКабельный тестер%3C/text%3E%3C/svg%3E';">
+    </div>
+    <div class="img-caption">Кадры из видео-диагностики: сетевая карта, коммутатор, кабельный тестер</div>
+
+    <div class="fill-row">
+        <span class="label-text">Установленная причина:</span>
+        <span class="empty-line"></span>
+    </div>
+    <div class="fill-row">
+        <span class="label-text">Результат проверки:</span>
+        <span class="empty-line"></span>
+    </div>
+    <div class="fill-row"><span class="label-text">Признак ошибки в распиновке (своими словами):</span></div>
+    <div class="fill-row"><span class="empty-line" style="min-width:100%;"></span></div>
+
+    <!-- 3. Кабели -->
+    <h2>3. 📀 Кабели типа «витая пара»</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Категория определяет максимальную частоту, скорость и область применения. Гигабит (1000BASE-T) использует все 4 пары.</p>
+
+    <table>
+        <thead>
+            <tr><th>Фото</th><th>Категория</th><th>Частота</th><th>Скорость</th><th>Применение</th></tr>
+        </thead>
+        <tbody>
+                    <tr>
+                        <td style="text-align:center;"><img src="cat5e.jpg" alt="Cat5e" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat5e%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat5e</b></td>
+                        <td><span class="filled">100 МГц</span></td>
+                        <td><span class="filled">1 Гбит/с</span></td>
+                        <td><span class="filled">Офисные ЛВС, гигабитные сети до 100 м</span></td>
+                    </tr>
+                
+                    <tr>
+                        <td style="text-align:center;"><img src="cat6.jpg" alt="Cat6" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat6%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat6</b></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                    </tr>
+                
+                    <tr>
+                        <td style="text-align:center;"><img src="cat6a.jpg" alt="Cat6a" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat6a%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat6a</b></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                    </tr>
+                
+                    <tr>
+                        <td style="text-align:center;"><img src="cat7.jpg" alt="Cat7" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat7%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat7</b></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                    </tr>
+                
+                    <tr>
+                        <td style="text-align:center;"><img src="cat7a.jpg" alt="Cat7a" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat7a%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat7a</b></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                    </tr>
+                
+                    <tr>
+                        <td style="text-align:center;"><img src="cat8.jpg" alt="Cat8" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ECat8%3C/text%3E%3C/svg%3E';"></td>
+                        <td><b>Cat8</b></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                        <td><span class="empty-line"></span></td>
+                    </tr>
+                </tbody>
+    </table>
+
+    <!-- 4. Экранирование -->
+    <h2>4. 🛡️ Типы экранирования витой пары</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Формула чтения:</b> символы до «/» — общий экран, после «/» — экранирование пар.</p>
+
+    
+                <table class="data-table">
+                    <thead><tr><th>Фото</th><th>ID</th><th>Определённый тип</th></tr></thead>
+                    <tbody><tr>
+                    <td style="text-align:center;"><img src="U_UTP.jpg" alt="U_UTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EU_UTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>U/UTP</td>
+                    <td><span class="filled">U/UTP</span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="S_UTP.jpg" alt="S_UTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ES_UTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>S/UTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="F_UTP.jpg" alt="F_UTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EF_UTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>F/UTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="SF_UTP.jpg" alt="SF_UTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ESF_UTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>SF/UTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="U_FTP.jpg" alt="U_FTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EU_FTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>U/FTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="S_FTP.jpg" alt="S_FTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ES_FTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>S/FTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="F_FTP.jpg" alt="F_FTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EF_FTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>F/FTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr><tr>
+                    <td style="text-align:center;"><img src="SF_FTP.jpg" alt="SF_FTP" style="max-width:100px; max-height:50px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ESF_FTP%3C/text%3E%3C/svg%3E';"></td>
+                    <td>SF/FTP</td>
+                    <td><span class="empty-line"></span></td>
+                </tr></tbody>
+                </table>
+            
+
+    <h3>Расшифровка обозначений:</h3>
+    <ul class="info-list">
+        <li><b>U/UTP</b> — без общего экрана, пары не экранированы.</li>
+        <li><b>F/UTP</b> — общий экран (фольга), пары не экранированы.</li>
+        <li><b>S/FTP</b> — общий экран (оплётка) + каждая пара в фольге.</li>
+        <li><b>SF/FTP</b> — общий экран (фольга + оплётка) + каждая пара в фольге.</li>
+    </ul>
+
+    <!-- 5. Расчёт длины -->
+    <h2>5. 📐 Расчёт длины кабеля</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Масштаб 1:10</b> — 1 см на схеме = 0,1 м в реальности.</p>
+
+    <div class="img-row">
+        <img src="планэтажа.jpg" alt="План этажа" style="max-height:150px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EПлан этажа%3C/text%3E%3C/svg%3E';">
+    </div>
+    <div class="img-caption">План этажа (масштаб 1:10)</div>
+
+    <div style="background:#fef9e6; padding:8px 12px; border-left:4px solid #f5c518; border-radius:6px; font-size:11px; margin-bottom:8px;">
+        <b>Формулы:</b><br>
+        <b>1.</b> Реальная длина (м) = Расстояние (см) × 0,1<br>
+        <b>2.</b> С запасом 15% = Реальная × 1,15<br>
+        <b>3.</b> Итого = С запасом × количество портов<br>
+        <b>4.</b> Округлить вверх до целого
+    </div>
+
+    <div class="fill-row"><span class="label-text">Расстояние на схеме:</span><span class="filled">24 см</span></div>
+    <div class="fill-row"><span class="label-text">Количество портов:</span><span class="filled">1 шт</span></div>
+    <div class="fill-row"><span class="label-text">Реальная длина:</span><span class="filled">2.40 м</span></div>
+    <div class="fill-row"><span class="label-text">С запасом 15%:</span><span class="filled">2.76 м</span></div>
+    <div class="fill-row"><span class="label-text">Итоговая длина:</span><span class="filled">3 м</span></div>
+
+    <!-- 6. Обжим -->
+    <h2>6. 🔌 Типы обжима патч-корда</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Прямой кабель (T568A или T568B) — компьютер ↔ коммутатор. Кроссовый (T568A + T568B) — компьютер ↔ компьютер.</p>
+
+    <h3>Схема 1 (прямой T568A):</h3>
+    <div class="img-row">
+        <img src="T568A.jpg" alt="T568A" style="max-height:70px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ET568A%3C/text%3E%3C/svg%3E';">
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span><span class="filled">Компьютер</span></div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span><span class="filled">Коммутатор</span></div>
+
+    <h3>Схема 2 (прямой T568B):</h3>
+    <div class="img-row">
+        <img src="T568B.jpg" alt="T568B" style="max-height:70px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ET568B%3C/text%3E%3C/svg%3E';">
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span><span class="filled">straight</span></div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span><span class="filled">T568B</span></div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span><span class="filled">Компьютер</span></div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span><span class="filled">Коммутатор</span></div>
+
+    <h3>Схема 3 (кроссовый):</h3>
+    <div class="img-row">
+        <img src="T568A_B.jpg" alt="T568A→B" style="max-height:70px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3ET568A→B%3C/text%3E%3C/svg%3E';">
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span><span class="empty-line"></span></div>
+
+    <!-- 7. Патч-корд -->
+    <h2>7. 🔧 Изготовление патч-корда (T568B)</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Порядок цветов T568B: бело-оранжевый, оранжевый, бело-зелёный, синий, бело-синий, зелёный, бело-коричневый, коричневый.</p>
+
+    <table>
+        <thead><tr><th>Этап</th><th>Иллюстрация</th><th>Выполнено</th></tr></thead>
+        <tbody><tr>
+                <td>1. Зачистка</td>
+                <td style="text-align:center;"><img src="этап1.jpg" alt="Этап 1" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 1%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr><tr>
+                <td>2. Расплетение и выравнивание</td>
+                <td style="text-align:center;"><img src="этап2.jpg" alt="Этап 2" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 2%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr><tr>
+                <td>3. Обрезка</td>
+                <td style="text-align:center;"><img src="этап3.jpg" alt="Этап 3" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 3%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr><tr>
+                <td>4. Вставка в коннектор</td>
+                <td style="text-align:center;"><img src="этап4.jpg" alt="Этап 4" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 4%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr><tr>
+                <td>5. Обжим</td>
+                <td style="text-align:center;"><img src="этап5.jpg" alt="Этап 5" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 5%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr><tr>
+                <td>6. Проверка</td>
+                <td style="text-align:center;"><img src="этап6.jpg" alt="Этап 6" style="max-width:90px; max-height:40px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3EЭтап 6%3C/text%3E%3C/svg%3E';"></td>
+                <td class="check-cell">☐</td>
+            </tr></tbody>
+    </table>
+
+    <!-- 8. Рефлексия -->
+    <h2>8. 🏆 Рефлексия</h2>
+    <div class="fill-row"><span class="label-text">Уровень понимания (розовый / оранжевый / зелёный / синий):</span><span class="empty-line"></span></div>
+    <div class="fill-row"><span class="label-text">Цвет линка на коммутаторе (зелёный / оранжевый):</span><span class="empty-line"></span></div>
+
+    <!-- Итог -->
+    <h2>📊 Результаты по модулям</h2>
+    <table>
+        <thead><tr><th>Модуль</th><th style="text-align:center;">Прогресс</th><th style="text-align:center;">Статус</th></tr></thead>
+        <tbody><tr><td>🏛️ Модель OSI</td><td style="text-align:center;font-weight:bold;">50%</td><td style="text-align:center;">⚠️</td></tr><tr><td>⚠️ Диагностика сети</td><td style="text-align:center;font-weight:bold;">0%</td><td style="text-align:center;">🔘</td></tr><tr><td>📀 Кабели типа витая пара</td><td style="text-align:center;font-weight:bold;">17%</td><td style="text-align:center;">⚠️</td></tr><tr><td>🛡️ Типы экранирования витой пары</td><td style="text-align:center;font-weight:bold;">13%</td><td style="text-align:center;">⚠️</td></tr><tr><td>📐 Расчёт длины кабеля</td><td style="text-align:center;font-weight:bold;">100%</td><td style="text-align:center;">✅</td></tr><tr><td>🔌 Типы обжима</td><td style="text-align:center;font-weight:bold;">33%</td><td style="text-align:center;">⚠️</td></tr><tr><td>🔧 Изготовление патч-корда</td><td style="text-align:center;font-weight:bold;">0%</td><td style="text-align:center;">🔘</td></tr><tr><td>🏆 Итоги</td><td style="text-align:center;font-weight:bold;">0%</td><td style="text-align:center;">🔘</td></tr></tbody>
+    </table>
+
+    <div class="final-grade">
+        <div class="label">Итоговая оценка за занятие:</div>
+        <div class="value">27 / 100</div>
+    </div>
+
+    <div class="footer">
+        Конспект сгенерирован автоматически. Пустые строки заполните от руки.
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Распечатать конспект</button>
+</div>
+</body>
+</html>

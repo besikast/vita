@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Модель OSI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a1a1a;
+        }
+
+        .viewport {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        /* ===== КОНТЕЙНЕР (в стиле главной) ===== */
+        .container {
+            width: 1400px;
+            height: 900px;
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            border: 1px solid #f5c518;
+            padding: 18px 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transform-origin: center center;
+            overflow: hidden;
+        }
+
+        /* ===== ЗАГОЛОВОК ===== */
+        .topic-header {
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 10px 20px;
+            color: #f5c518;
+            border-left: 8px solid #f5c518;
+            flex-shrink: 0;
+        }
+        .topic-header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #f5c518;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topic-header p {
+            font-size: 0.78rem;
+            color: #dddddd;
+            font-weight: 500;
+        }
+
+        /* ===== ПРОГРЕСС ===== */
+        .progress-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .progress-label-text {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+        }
+        .progress-bar-container {
+            flex: 1;
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #f5c518;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* ===== ИГРОВАЯ ЗОНА (2 блока, как в оригинале) ===== */
+        .game-areas {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .game-row {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .left-panel {
+            flex: 1.15;
+            background: #fef9e6;
+            border-radius: 24px;
+            padding: 10px 12px;
+            border: 2px solid #f5c518;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .right-panel {
+            flex: 1.35;
+            background: #fafafa;
+            border-radius: 24px;
+            padding: 10px 12px;
+            border: 2px solid #f5c518;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .panel-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-left: 4px solid #f5c518;
+            padding-left: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ===== ПИРАМИДА ===== */
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            margin: 2px 0;
+            flex: 1;
+            justify-content: center;
+        }
+        .pyramid-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .level-slot {
+            background: #fff5e6;
+            border: 2px dashed #c0cfde;
+            border-radius: 14px;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            transition: all 0.1s;
+            font-size: 0.78rem;
+            min-height: 30px;
+        }
+        .level-slot[data-level="7"] { width: 160px; }
+        .level-slot[data-level="6"] { width: 195px; }
+        .level-slot[data-level="5"] { width: 230px; }
+        .level-slot[data-level="4"] { width: 265px; }
+        .level-slot[data-level="3"] { width: 300px; background: #fff9e6; border-color: #f5c518; }
+        .level-slot[data-level="2"] { width: 335px; background: #fff9e6; border-color: #f5c518; }
+        .level-slot[data-level="1"] { width: 370px; background: #fff9e6; border-color: #f5c518; }
+
+        .level-slot.filled {
+            background: #e0f0e8;
+            border: 2px solid #2c8c5a;
+            color: #1d4d33;
+        }
+        .level-slot.fixed {
+            background: #f0f0f0;
+            border: 2px solid #bbb;
+            color: #555;
+            cursor: not-allowed;
+        }
+        .level-slot.drag-over {
+            background: #fff3b0;
+            border-color: #f5c518;
+            border-style: solid;
+            transform: scale(1.02);
+        }
+        .level-slot.editable-empty {
+            border-style: dashed;
+            border-color: #f5c518;
+            background: #fffdf5;
+        }
+
+        .level-number {
+            font-weight: 800;
+            background: #1a1a1a;
+            color: #f5c518;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-size: 0.72rem;
+            flex-shrink: 0;
+        }
+        .level-slot.filled .level-number {
+            background: #2c8c5a;
+            color: white;
+        }
+        .level-slot.fixed .level-number {
+            background: #888;
+            color: white;
+        }
+        .slot-text {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .remove-level-btn {
+            background: none;
+            border: none;
+            color: #aa6f5e;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: bold;
+            width: 18px;
+            border-radius: 30px;
+            flex-shrink: 0;
+        }
+
+        /* ===== ПУЛЫ (названия + оборудование) ===== */
+        .drag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 16px;
+            border: 2px dashed #f5c518;
+            min-height: 54px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+            align-content: flex-start;
+        }
+        .drag-grid.empty {
+            border-style: dotted;
+            border-color: #ccc;
+            background: #fafafa;
+        }
+        .drag-item {
+            background: #1a1a1a;
+            color: #f5c518;
+            border-radius: 60px;
+            padding: 5px 12px;
+            cursor: grab;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            font-size: 0.72rem;
+            border: 1px solid #f5c518;
+            transition: 0.1s;
+        }
+        .drag-item:hover { background: #f5c518; color: #1a1a1a; }
+        .drag-item:active { cursor: grabbing; }
+        .drag-item.dragging { opacity: 0.5; }
+
+        .empty-pool {
+            font-size: 0.72rem;
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* ===== КНОПКИ ===== */
+        .btn {
+            background: #1a1a1a;
+            border: 1px solid #f5c518;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            transition: 0.1s;
+            white-space: nowrap;
+        }
+        .btn:hover { background: #f5c518; color: #1a1a1a; transform: scale(0.97); }
+        .btn-full { width: 100%; }
+        .btn-reset { background: #2a2a2a; }
+        .btn-check { background: #1a1a1a; color: #f5c518; }
+
+        .check-btn-row {
+            text-align: center;
+            flex-shrink: 0;
+            margin-top: auto;
+            padding-top: 6px;
+        }
+
+        /* ===== ЗОНЫ ОБОРУДОВАНИЯ ===== */
+        .level-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-height: 0;
+        }
+        .zone-card {
+            background: #f9f9fc;
+            border-radius: 14px;
+            padding: 6px 10px;
+            border: 1px solid #dee4ed;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .zone-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #1a1a1a;
+            flex-shrink: 0;
+        }
+        .zone-badge {
+            background: #1a1a1a;
+            color: #f5c518;
+            border-radius: 30px;
+            padding: 2px 10px;
+            font-size: 0.62rem;
+            font-weight: bold;
+        }
+        .drop-zone {
+            background: #f1f5f9;
+            border: 2px dotted #999;
+            border-radius: 12px;
+            flex: 1;
+            padding: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: flex-start;
+            align-content: flex-start;
+            transition: 0.1s;
+            min-height: 34px;
+            overflow-y: auto;
+        }
+        .drop-zone.drag-over {
+            background: #fff3b0;
+            border-color: #f5c518;
+            border-style: solid;
+        }
+        .zone-item {
+            background: #1a1a1a;
+            color: #f5c518;
+            border-radius: 40px;
+            padding: 3px 9px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            border: 1px solid #f5c518;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ffb3b3;
+            cursor: pointer;
+            margin-left: 3px;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        /* ===== ФИДБЕК ===== */
+        .feedback {
+            margin-top: 5px;
+            background: #f5f5f5;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-weight: 500;
+            font-size: 0.72rem;
+            border-left: 4px solid #999;
+            flex-shrink: 0;
+            white-space: pre-line;
+            line-height: 1.3;
+        }
+        .feedback.success { background: #c8e6d9; color: #1e5a3a; border-left-color: #2c8c5a; }
+        .feedback.error { background: #ffe0db; color: #b13e3e; border-left-color: #e67e5a; }
+        .feedback.info { background: #fef9e6; color: #8a6d1e; border-left-color: #f5c518; }
+
+        /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #6c6c6c;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        /* ===== ПЕЧАТЬ ===== */
+        @media print {
+            html, body { overflow: visible; height: auto; background: white; }
+            .viewport { width: auto; height: auto; display: block; overflow: visible; padding: 0; }
+            .container {
+                transform: none !important;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                border-radius: 0;
+                border: none;
+                padding: 10px;
+            }
+            .level-slot[data-level] { width: auto !important; min-width: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="viewport" id="viewport">
+    <div class="container" id="container">
+
+        <!-- ЗАГОЛОВОК -->
+        <div class="topic-header">
+            <h1>📡 Модель OSI: собери пирамиду</h1>
+            <p>🔌 Уровни 4–7 уже заполнены. Ваша задача — перетащить названия уровней 1–3 в пустые слоты и распределить оборудование по этим уровням.</p>
+        </div>
+
+        <!-- ПРОГРЕСС -->
+        <div class="progress-bar-wrap">
+            <span class="progress-label-text">📊 Прогресс:</span>
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">0%</span>
+        </div>
+
+        <!-- ИГРОВЫЕ БЛОКИ -->
+        <div class="game-areas">
+
+            <!-- БЛОК 1: ПИРАМИДА -->
+            <div class="game-row">
+                <div class="left-panel">
+                    <div class="panel-title">🏛️ Пирамида OSI (уровни 1–7)</div>
+                    <div id="pyramidContainer" class="pyramid"></div>
+                </div>
+                <div class="right-panel">
+                    <div class="panel-title">📋 Названия уровней 1–3 (перетащи в пирамиду)</div>
+                    <div id="levelNamesPool" class="drag-grid"></div>
+                    <div class="check-btn-row">
+                        <button id="checkPyramidBtn" class="btn btn-check btn-full">✅ Проверить пирамиду</button>
+                    </div>
+                    <div id="pyramidFeedback" class="feedback info">📌 Нажмите «Проверить пирамиду»</div>
+                </div>
+            </div>
+
+            <!-- БЛОК 2: ОБОРУДОВАНИЕ -->
+            <div class="game-row">
+                <div class="left-panel">
+                    <div class="panel-title">🎯 Уровни 1–3 (сопоставь оборудование)</div>
+                    <div class="level-zones">
+                        <div class="zone-card">
+                            <div class="zone-title"><span class="zone-badge">Уровень 1</span> 🔌 Физический</div>
+                            <div id="dropZone1" class="drop-zone" data-level="1"></div>
+                        </div>
+                        <div class="zone-card">
+                            <div class="zone-title"><span class="zone-badge">Уровень 2</span> 🔗 Канальный</div>
+                            <div id="dropZone2" class="drop-zone" data-level="2"></div>
+                        </div>
+                        <div class="zone-card">
+                            <div class="zone-title"><span class="zone-badge">Уровень 3</span> 🌐 Сетевой</div>
+                            <div id="dropZone3" class="drop-zone" data-level="3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-panel">
+                    <div class="panel-title">🖥️ Оборудование / технологии (перетащи в зоны слева)</div>
+                    <div id="techPool" class="drag-grid"></div>
+                    <div class="check-btn-row">
+                        <button id="checkTechBtn" class="btn btn-check btn-full">✅ Проверить уровни 1–3</button>
+                    </div>
+                    <div id="techFeedback" class="feedback info">📌 Нажмите «Проверить уровни 1–3»</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- НИЖНЯЯ ПАНЕЛЬ -->
+        <div class="nav-buttons">
+            <button id="resetAllBtn" class="btn btn-reset">🔄 Сбросить всё (только это задание)</button>
+            <button id="saveAndGoHomeBtn" class="btn">🏠 Сохранить и на главную</button>
+        </div>
+
+        <div id="globalFeedback" class="feedback info" style="text-align:center;">
+            💡 Заполните уровни 1–3 и распределите оборудование. Уровни 4–7 уже на месте и не влияют на прогресс.
+        </div>
+
+        <footer>💡 Прогресс сохраняется автоматически. На оценку влияют только уровни 1–3 и оборудование.</footer>
+    </div>
+</div>
+
+<script>
+    // ========== КЛЮЧИ ==========
+    const PAGE_STORAGE_KEY = "osi_pyramid_progress";
+    const STATE_KEY = "osi_pyramid_progress_state";
+
+    // ========== ДАННЫЕ ==========
+    const levelNumberToName = {
+        1: "Физический", 2: "Канальный", 3: "Сетевой",
+        4: "Транспортный", 5: "Сеансовый", 6: "Уровень представления", 7: "Прикладной"
+    };
+
+    // Уровни, которые уже заполнены и НЕ влияют на прогресс
+    const FIXED_LEVELS = {
+        4: "Транспортный",
+        5: "Сеансовый",
+        6: "Уровень представления",
+        7: "Прикладной"
+    };
+
+    // Уровни, которые нужно заполнить (влияют на прогресс)
+    const EDITABLE_LEVELS = [1, 2, 3];
+
+    // Названия для пула (только для редактируемых уровней)
+    const editableNames = ["Физический", "Канальный", "Сетевой"];
+
+    const techItems = [
+        { id: "hub", name: "Хаб (Hub)", correctLevel: 1, icon: "🔌" },
+        { id: "utp", name: "Витая пара", correctLevel: 1, icon: "📀" },
+        { id: "rj45", name: "Коннектор RJ-45", correctLevel: 1, icon: "🔌" },
+        { id: "switch", name: "Коммутатор (Switch)", correctLevel: 2, icon: "🔁" },
+        { id: "mac", name: "MAC-адрес", correctLevel: 2, icon: "🏷️" },
+        { id: "router", name: "Маршрутизатор (Router)", correctLevel: 3, icon: "🌍" },
+        { id: "ip", name: "IP-адрес", correctLevel: 3, icon: "🌐" }
+    ];
+
+    // ========== СОСТОЯНИЕ ==========
+    // pyramidState содержит ТОЛЬКО редактируемые уровни (1-3). Остальные фиксированы.
+    let pyramidState = { 1: null, 2: null, 3: null };
+    let techAssignments = { 1: [], 2: [], 3: [] };
+
+    // DOM
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const globalFeedbackDiv = document.getElementById('globalFeedback');
+    const pyramidFeedbackDiv = document.getElementById('pyramidFeedback');
+    const techFeedbackDiv = document.getElementById('techFeedback');
+
+    let pyramidContainer = document.getElementById('pyramidContainer');
+    let levelNamesPoolDiv = document.getElementById('levelNamesPool');
+    let techPoolDiv = document.getElementById('techPool');
+    const dropZones = {
+        1: document.getElementById('dropZone1'),
+        2: document.getElementById('dropZone2'),
+        3: document.getElementById('dropZone3')
+    };
+
+    // ========== ПРОГРЕСС ==========
+    function calculateProgress() {
+        // Проверяем только уровни 1–3
+        let pyramidCorrect = true;
+        for (let lvl of EDITABLE_LEVELS) {
+            if (pyramidState[lvl] !== levelNumberToName[lvl]) {
+                pyramidCorrect = false;
+                break;
+            }
+        }
+        // Проверяем оборудование
+        let techCorrect = true;
+        for (let tech of techItems) {
+            let placedLevel = null;
+            for (let lvl of EDITABLE_LEVELS) {
+                if (techAssignments[lvl].includes(tech.id)) {
+                    placedLevel = lvl;
+                    break;
+                }
+            }
+            if (placedLevel !== tech.correctLevel) {
+                techCorrect = false;
+                break;
+            }
+        }
+
+        if (pyramidCorrect && techCorrect) return 100;
+        if (pyramidCorrect || techCorrect) return 50;
+        return 0;
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        progressFill.style.width = progress + '%';
+        progressText.innerText = progress + '%';
+        return progress;
+    }
+
+    function saveProgressToLocalStorage() {
+        let progress = calculateProgress();
+        localStorage.setItem(PAGE_STORAGE_KEY, JSON.stringify(progress));
+        window.dispatchEvent(new StorageEvent('storage', { key: PAGE_STORAGE_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveProgressToLocalStorage();
+        if (progress === 100) {
+            globalFeedbackDiv.innerHTML = "🎉 Отлично! Задание полностью выполнено. Прогресс сохранён!";
+            globalFeedbackDiv.className = 'feedback success';
+        } else if (progress === 50) {
+            globalFeedbackDiv.innerHTML = "⚠️ Выполнена половина задания. Продолжайте!";
+            globalFeedbackDiv.className = 'feedback info';
+        } else {
+            globalFeedbackDiv.innerHTML = "📌 Продолжайте выполнять задание. Прогресс сохраняется автоматически.";
+            globalFeedbackDiv.className = 'feedback info';
+        }
+    }
+
+    function loadSavedState() {
+        const saved = localStorage.getItem(STATE_KEY);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.pyramidState) {
+                    for (let lvl of EDITABLE_LEVELS) {
+                        pyramidState[lvl] = data.pyramidState[lvl] || null;
+                    }
+                }
+                if (data.techAssignments) {
+                    for (let lvl of EDITABLE_LEVELS) {
+                        techAssignments[lvl] = data.techAssignments[lvl] || [];
+                    }
+                }
+            } catch(e) {}
+        }
+    }
+
+    function saveFullState() {
+        localStorage.setItem(STATE_KEY, JSON.stringify({ pyramidState, techAssignments }));
+        autoSaveAndUpdate();
+    }
+
+    // ========== ФИДБЕК ==========
+    function showGlobalFeedback(msg, type) {
+        globalFeedbackDiv.innerText = msg;
+        globalFeedbackDiv.className = 'feedback ' + (type || 'info');
+    }
+    function showPyramidFeedback(msg, type) {
+        pyramidFeedbackDiv.innerText = msg;
+        pyramidFeedbackDiv.className = 'feedback ' + (type || 'info');
+    }
+    function showTechFeedback(msg, type) {
+        techFeedbackDiv.innerText = msg;
+        techFeedbackDiv.className = 'feedback ' + (type || 'info');
+    }
+
+    // ========== РЕНДЕР ПИРАМИДЫ ==========
+    function renderPyramid() {
+        pyramidContainer = document.getElementById('pyramidContainer');
+        pyramidContainer.innerHTML = '';
+        const levelsOrder = [7, 6, 5, 4, 3, 2, 1];
+        for (let lvl of levelsOrder) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'pyramid-row';
+            const slot = document.createElement('div');
+            slot.className = 'level-slot';
+            slot.setAttribute('data-level', lvl);
+            slot.setAttribute('data-level-target', lvl);
+
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'level-number';
+            numberSpan.innerText = lvl;
+
+            const textSpan = document.createElement('span');
+            textSpan.className = 'slot-text';
+
+            // ФИКСИРОВАННЫЙ уровень (4-7)
+            if (FIXED_LEVELS[lvl]) {
+                textSpan.innerText = FIXED_LEVELS[lvl];
+                slot.classList.add('fixed');
+                slot.appendChild(numberSpan);
+                slot.appendChild(textSpan);
+            } else {
+                // РЕДАКТИРУЕМЫЙ уровень (1-3)
+                const assignedName = pyramidState[lvl];
+                if (assignedName) {
+                    textSpan.innerText = assignedName;
+                    slot.classList.add('filled');
+                } else {
+                    textSpan.innerText = '____________';
+                    slot.classList.add('editable-empty');
+                }
+                slot.appendChild(numberSpan);
+                slot.appendChild(textSpan);
+
+                // Кнопка удаления
+                if (assignedName) {
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerText = '✖';
+                    removeBtn.className = 'remove-level-btn';
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        const removed = pyramidState[lvl];
+                        pyramidState[lvl] = null;
+                        renderPyramid();
+                        renderLevelNamesPool();
+                        saveFullState();
+                        showGlobalFeedback(`↩️ "${removed}" возвращено в пул.`, 'info');
+                        showPyramidFeedback('Пирамида изменена.', 'info');
+                    };
+                    slot.appendChild(removeBtn);
+                }
+
+                // Drag-and-drop
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    slot.classList.add('drag-over');
+                });
+                slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    slot.classList.remove('drag-over');
+                    const rawData = e.dataTransfer.getData('text/plain');
+                    if (!rawData) return;
+                    try {
+                        const dragObj = JSON.parse(rawData);
+                        if (dragObj.type === 'levelName') {
+                            const levelName = dragObj.value;
+                            if (pyramidState[lvl]) { showGlobalFeedback(`Уровень ${lvl} уже занят`, 'error'); return; }
+                            const alreadyUsed = EDITABLE_LEVELS.some(l => pyramidState[l] === levelName);
+                            if (alreadyUsed) { showGlobalFeedback(`"${levelName}" уже используется`, 'error'); return; }
+                            pyramidState[lvl] = levelName;
+                            renderPyramid();
+                            renderLevelNamesPool();
+                            saveFullState();
+                            showGlobalFeedback(`✅ "${levelName}" на уровень ${lvl}`, 'success');
+                            showPyramidFeedback('Пирамида обновлена.', 'info');
+                        }
+                    } catch(err) {}
+                });
+            }
+
+            rowDiv.appendChild(slot);
+            pyramidContainer.appendChild(rowDiv);
+        }
+    }
+
+    // ========== РЕНДЕР ПУЛА НАЗВАНИЙ ==========
+    function renderLevelNamesPool() {
+        levelNamesPoolDiv = document.getElementById('levelNamesPool');
+        levelNamesPoolDiv.innerHTML = '';
+        const usedNames = EDITABLE_LEVELS.map(l => pyramidState[l]).filter(v => v !== null);
+        const remaining = editableNames.filter(n => !usedNames.includes(n));
+
+        if (remaining.length === 0) {
+            levelNamesPoolDiv.classList.add('empty');
+            const empty = document.createElement('div');
+            empty.className = 'empty-pool';
+            empty.innerText = '✅ Все названия размещены.';
+            levelNamesPoolDiv.appendChild(empty);
+        } else {
+            levelNamesPoolDiv.classList.remove('empty');
+            remaining.forEach(name => {
+                const dragEl = document.createElement('div');
+                dragEl.className = 'drag-item';
+                dragEl.innerText = name;
+                dragEl.setAttribute('draggable', 'true');
+                dragEl.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'levelName', value: name }));
+                    dragEl.classList.add('dragging');
+                });
+                dragEl.addEventListener('dragend', () => dragEl.classList.remove('dragging'));
+                levelNamesPoolDiv.appendChild(dragEl);
+            });
+        }
+    }
+
+    // ========== РЕНДЕР ПУЛА ОБОРУДОВАНИЯ ==========
+    function renderTechPool() {
+        techPoolDiv = document.getElementById('techPool');
+        techPoolDiv.innerHTML = '';
+        const placedIds = [...techAssignments[1], ...techAssignments[2], ...techAssignments[3]];
+        const available = techItems.filter(t => !placedIds.includes(t.id));
+
+        if (available.length === 0) {
+            techPoolDiv.classList.add('empty');
+            const empty = document.createElement('div');
+            empty.className = 'empty-pool';
+            empty.innerText = '✅ Всё оборудование распределено.';
+            techPoolDiv.appendChild(empty);
+        } else {
+            techPoolDiv.classList.remove('empty');
+            available.forEach(tech => {
+                const dragEl = document.createElement('div');
+                dragEl.className = 'drag-item';
+                dragEl.innerHTML = `${tech.icon} ${tech.name}`;
+                dragEl.setAttribute('draggable', 'true');
+                dragEl.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'tech', id: tech.id, name: tech.name }));
+                    dragEl.classList.add('dragging');
+                });
+                dragEl.addEventListener('dragend', () => dragEl.classList.remove('dragging'));
+                techPoolDiv.appendChild(dragEl);
+            });
+        }
+    }
+
+    // ========== РЕНДЕР ЗОН ОБОРУДОВАНИЯ ==========
+    function renderTechZones() {
+        for (let lvl of EDITABLE_LEVELS) {
+            const zone = dropZones[lvl];
+            if (!zone) continue;
+            zone.innerHTML = '';
+            techAssignments[lvl].forEach(techId => {
+                const tech = techItems.find(t => t.id === techId);
+                if (tech) {
+                    const chip = document.createElement('div');
+                    chip.className = 'zone-item';
+                    chip.innerHTML = `${tech.icon} ${tech.name} <button class="remove-btn" data-tech-id="${tech.id}" data-level="${lvl}">✖</button>`;
+                    chip.querySelector('.remove-btn').onclick = () => {
+                        const idx = techAssignments[lvl].indexOf(tech.id);
+                        if (idx !== -1) techAssignments[lvl].splice(idx, 1);
+                        renderTechZones();
+                        renderTechPool();
+                        saveFullState();
+                        showGlobalFeedback(`↩️ "${tech.name}" возвращено.`, 'info');
+                        showTechFeedback('Распределение изменено.', 'info');
+                    };
+                    zone.appendChild(chip);
+                }
+            });
+        }
+        attachDropZonesEvents();
+    }
+
+    function attachDropZonesEvents() {
+        for (let lvl of EDITABLE_LEVELS) {
+            const zone = dropZones[lvl];
+            if (!zone) continue;
+            zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('drag-over'); };
+            zone.ondragleave = () => zone.classList.remove('drag-over');
+            zone.ondrop = (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const rawData = e.dataTransfer.getData('text/plain');
+                if (!rawData) return;
+                try {
+                    const dragObj = JSON.parse(rawData);
+                    if (dragObj.type === 'tech') {
+                        const tech = techItems.find(t => t.id === dragObj.id);
+                        if (!tech) return;
+                        let already = false;
+                        for (let l of EDITABLE_LEVELS) if (techAssignments[l].includes(tech.id)) already = true;
+                        if (already) { showGlobalFeedback(`❌ ${tech.name} уже размещён`, 'error'); return; }
+                        techAssignments[lvl].push(tech.id);
+                        renderTechZones();
+                        renderTechPool();
+                        saveFullState();
+                        showGlobalFeedback(`✓ ${tech.name} → уровень ${lvl}`, 'success');
+                        showTechFeedback('Оборудование добавлено.', 'info');
+                    }
+                } catch(err) {}
+            };
+        }
+    }
+
+    // ========== ПРОВЕРКА ПИРАМИДЫ ==========
+    function checkPyramid() {
+        let errors = [];
+        for (let lvl of EDITABLE_LEVELS) {
+            const assigned = pyramidState[lvl];
+            const correct = levelNumberToName[lvl];
+            if (!assigned) errors.push(`⚠️ Уровень ${lvl} не заполнен`);
+            else if (assigned !== correct) errors.push(`❌ Уровень ${lvl}: "${assigned}" → должно быть "${correct}"`);
+        }
+        if (errors.length === 0) {
+            showPyramidFeedback('✅ Пирамида (уровни 1–3) верна!', 'success');
+            showGlobalFeedback('Пирамида: без ошибок', 'success');
+        } else {
+            showPyramidFeedback('❌ Ошибки:\n' + errors.join('\n'), 'error');
+            showGlobalFeedback('Пирамида содержит ошибки', 'error');
+        }
+        saveFullState();
+    }
+
+    // ========== ПРОВЕРКА ОБОРУДОВАНИЯ ==========
+    function checkTechLevels() {
+        let errors = [];
+        for (let tech of techItems) {
+            let placed = null;
+            for (let lvl of EDITABLE_LEVELS) if (techAssignments[lvl].includes(tech.id)) placed = lvl;
+            if (!placed) errors.push(`❌ ${tech.name} не размещён (нужен уровень ${tech.correctLevel})`);
+            else if (placed !== tech.correctLevel) errors.push(`❌ ${tech.name} на уровне ${placed}, должен на ${tech.correctLevel}`);
+        }
+        if (errors.length === 0) {
+            showTechFeedback('✅ Распределение верно!', 'success');
+            showGlobalFeedback('Уровни 1–3: верно', 'success');
+        } else {
+            showTechFeedback('❌ Ошибки:\n' + errors.join('\n'), 'error');
+            showGlobalFeedback('Уровни 1–3 содержат ошибки', 'error');
+        }
+        saveFullState();
+    }
+
+    // ========== СБРОС ==========
+    function resetAll() {
+        if (confirm('Сбросить прогресс этого задания? Уровни 4–7 останутся заполненными. Восстановить будет невозможно.')) {
+            pyramidState = { 1: null, 2: null, 3: null };
+            techAssignments = { 1: [], 2: [], 3: [] };
+            renderPyramid();
+            renderLevelNamesPool();
+            renderTechZones();
+            renderTechPool();
+            saveFullState();
+            showPyramidFeedback('📌 Уровни 1–3 сброшены.', 'info');
+            showTechFeedback('📌 Зоны оборудования очищены.', 'info');
+            showGlobalFeedback('🔄 Задание сброшено (уровни 4–7 остались на месте).', 'success');
+        }
+    }
+
+    function saveAndGoHome() {
+        saveFullState();
+        window.location.href = "главная.html";
+    }
+
+    // ========== АВТОМАСШТАБИРОВАНИЕ ==========
+    function fitContainer() {
+        const viewport = document.getElementById('viewport');
+        const container = document.getElementById('container');
+        if (!viewport || !container) return;
+        container.style.transform = 'scale(1)';
+        const contWidth = container.offsetWidth;
+        const contHeight = container.offsetHeight;
+        const availWidth = viewport.clientWidth;
+        const availHeight = viewport.clientHeight;
+        const scale = Math.min(availWidth / contWidth, availHeight / contHeight, 1);
+        container.style.transform = `scale(${scale})`;
+    }
+
+    // ========== ГЛОБАЛЬНЫЙ СБРОС С ГЛАВНОЙ ==========
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            localStorage.removeItem(PAGE_STORAGE_KEY);
+            localStorage.removeItem(STATE_KEY);
+            pyramidState = { 1: null, 2: null, 3: null };
+            techAssignments = { 1: [], 2: [], 3: [] };
+            renderPyramid();
+            renderLevelNamesPool();
+            renderTechZones();
+            renderTechPool();
+            updateProgressUI();
+            showPyramidFeedback('📌 Уровни 1–3 сброшены.', 'info');
+            showTechFeedback('📌 Зоны очищены.', 'info');
+            showGlobalFeedback('🔄 Глобальный сброс выполнен.', 'info');
+        }
+    });
+
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    function init() {
+        loadSavedState();
+        renderPyramid();
+        renderLevelNamesPool();
+        renderTechZones();
+        renderTechPool();
+        updateProgressUI();
+        document.getElementById('checkPyramidBtn').addEventListener('click', checkPyramid);
+        document.getElementById('checkTechBtn').addEventListener('click', checkTechLevels);
+        document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+        document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+        saveFullState();
+        fitContainer();
+    }
+
+    window.addEventListener('load', () => {
+        init();
+        setTimeout(fitContainer, 200);
+        setTimeout(fitContainer, 600);
+    });
+    window.addEventListener('resize', fitContainer);
+    window.addEventListener('pageshow', () => { init(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { fitContainer(); } });
+</script>
+</body>
+</html>

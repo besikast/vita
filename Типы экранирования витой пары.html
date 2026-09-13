@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Типы экранирования витой пары</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            padding: 24px 28px 36px;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            color: #0f3b5f;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 20px 0;
+            font-weight: 500;
+        }
+
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin: 20px 0 30px;
+        }
+
+        .cables-area {
+            flex: 2;
+            min-width: 280px;
+        }
+
+        .info-area {
+            flex: 1.2;
+            min-width: 260px;
+            background: #f8fafd;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid #dee4ed;
+            height: fit-content;
+        }
+
+        .info-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #1e4663;
+            border-left: 4px solid #ff8c42;
+            padding-left: 12px;
+        }
+
+        .shield-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+
+        .shield-table td, .shield-table th {
+            padding: 8px 6px;
+            border-bottom: 1px solid #cbdde9;
+            vertical-align: top;
+        }
+
+        .shield-table th {
+            text-align: left;
+            background: #eef2f5;
+        }
+
+        .cables-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .cable-card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+            border: 1px solid #e4edf5;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cable-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 160px;
+            background: #f9fbfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-bottom: 1px solid #e2edf5;
+        }
+
+        .card-img img {
+            max-width: 100%;
+            max-height: 130px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .card-content {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .select-group {
+            margin-bottom: 12px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 60px;
+            border: 1px solid #cbdde9;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #ff8c42;
+        }
+
+        .check-btn {
+            background: #2c5a7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            margin: 12px 0 8px;
+            transition: 0.1s;
+        }
+
+        .check-btn:hover {
+            background: #1f4460;
+            transform: scale(0.97);
+        }
+
+        .card-feedback {
+            font-size: 0.75rem;
+            text-align: center;
+            border-radius: 40px;
+            padding: 6px 8px;
+            background: #f0f4f9;
+            color: #2c5a7a;
+            word-break: break-word;
+        }
+
+        .correct-feedback {
+            background: #c8e6d9;
+            color: #1e5a3a;
+        }
+
+        .wrong-feedback {
+            background: #ffe0db;
+            color: #b13e3e;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-blue {
+            background: #3a7ca5;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-blue:hover {
+            background: #2c5a7a;
+            transform: scale(0.97);
+        }
+
+        .btn-gray {
+            background: #5f6c7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-gray:hover {
+            background: #3e4a5a;
+            transform: scale(0.97);
+        }
+
+        .btn-orange {
+            background: #ff8c42;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-orange:hover {
+            background: #e67e2e;
+            transform: scale(0.97);
+        }
+
+        .global-feedback {
+            margin-top: 28px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .hint-text {
+            background: #fff7e5;
+            padding: 12px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7b8c9e;
+            border-top: 1px solid #e2edf5;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .cables-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 900px) {
+            .cables-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .two-columns {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 600px) {
+            .cables-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🛡️ Типы экранирования витой пары</h1>
+    <div class="sub">🔍 Рассмотрите физические кабели и изображения. Определите тип экранирования. Выберите вариант из списка и проверьте.</div>
+
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="two-columns">
+        <div class="cables-area">
+            <div class="cables-grid" id="cablesGrid"></div>
+        </div>
+
+        <div class="info-area">
+            <div class="info-title">📘 Справочник: что означают символы?</div>
+            <table class="shield-table">
+                <tr><th>Обозначение</th><th>Расшифровка</th></tr>
+                <tr><td>__/UTP</td><td>Нет экранированных пар, общий экран отсутствует</td></tr>
+                <tr><td>__/FTP</td><td>Каждая пара экранирована фольгой</td></tr>
+                <tr><td>U/__</td><td>Нет общего экрана (unshielded overall)</td></tr>
+                <tr><td>S/__</td><td>Общий экран — оплётка (braid)</td></tr>
+                <tr><td>F/__</td><td>Общий экран — фольга (foil)</td></tr>
+                <tr><td>SF/__</td><td>Общий экран: фольга + оплётка</td></tr>
+             </table>
+            <div class="hint-text">
+                <strong>⚡ Когда нужен экранированный кабель?</strong><br>
+                • Вблизи силовых линий, электродвигателей, промышленного оборудования.<br>
+                • В центрах обработки данных (ЦОД) для защиты от перекрестных помех.<br>
+                • При высокоскоростной передаче (10 Гбит/с и выше) на больших частотах.<br>
+                • В помещениях с большим количеством электромагнитных помех.<br>
+                • Для соблюдения стандартов Cat6a, Cat7, Cat8 (часто требуется экран).
+            </div>
+            <div style="margin-top: 18px; font-size:0.8rem;">
+                💡 <strong>Формула чтения:</strong> первые символы (до /) – общий экран, после / – экранирование пар.<br>
+                Пример: <strong>F/UTP</strong> = общий экран фольга, пары неэкранированные.
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="globalCheckBtn" class="btn-blue">✅ Проверить все типы</button>
+        <button id="resetAllBtn" class="btn-gray">🔄 Сбросить всё (только это задание)</button>
+        <button id="saveAndGoHomeBtn" class="btn-orange">🏠 Сохранить прогресс и на главную</button>
+    </div>
+    <div id="globalFeedback" class="global-feedback">
+        📌 Определите тип экранирования для каждого кабеля. Выберите ответ из списка и нажмите «Проверить».
+    </div>
+    <footer>🧪 Задание: у вас на столе реальные куски кабеля. Сравните с фото, изучите конструкцию (наличие оплётки, фольги, экранирование пар). Затем выберите тип в списке и проверьте.</footer>
+</div>
+
+<script>
+    // ========== КЛЮЧИ ДЛЯ ХРАНЕНИЯ ==========
+    const PROGRESS_KEY = "shielding_types_progress";
+    const SELECTIONS_KEY = "shielding_types_selections";
+
+    // ========== ПРАВИЛЬНЫЕ ОТВЕТЫ ==========
+    const cableData = [
+        { id: "U_UTP", img: "U_UTP.jpg", correctType: "U/UTP" },
+        { id: "S_UTP", img: "S_UTP.jpg", correctType: "S/UTP" },
+        { id: "F_UTP", img: "F_UTP.jpg", correctType: "F/UTP" },
+        { id: "SF_UTP", img: "SF_UTP.jpg", correctType: "SF/UTP" },
+        { id: "U_FTP", img: "U_FTP.jpg", correctType: "U/FTP" },
+        { id: "S_FTP", img: "S_FTP.jpg", correctType: "S/FTP" },
+        { id: "F_FTP", img: "F_FTP.jpg", correctType: "F/FTP" },
+        { id: "SF_FTP", img: "SF_FTP.jpg", correctType: "SF/FTP" }
+    ];
+
+    const allTypes = ["U/UTP", "S/UTP", "F/UTP", "SF/UTP", "U/FTP", "S/FTP", "F/FTP", "SF/FTP"];
+
+    // Загружаем сохранённые выборы
+    let selections = {};
+    function loadSelections() {
+        const saved = localStorage.getItem(SELECTIONS_KEY);
+        if (saved) {
+            try {
+                selections = JSON.parse(saved);
+            } catch(e) { selections = {}; }
+        }
+        for (let cable of cableData) {
+            if (!selections[cable.id]) {
+                selections[cable.id] = "";
+            }
+        }
+    }
+
+    function saveSelections() {
+        localStorage.setItem(SELECTIONS_KEY, JSON.stringify(selections));
+    }
+
+    // Прогресс (0-100)
+    function calculateProgress() {
+        let totalCorrect = 0;
+        for (let cable of cableData) {
+            if (selections[cable.id] === cable.correctType) {
+                totalCorrect++;
+            }
+        }
+        return Math.round((totalCorrect / cableData.length) * 100);
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        const fill = document.getElementById('progressFill');
+        const text = document.getElementById('progressText');
+        if (fill) fill.style.width = progress + '%';
+        if (text) text.innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveProgressToLocalStorage() {
+        let progress = calculateProgress();
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        console.log(`💾 Сохранён прогресс экранирования: ${progress}%`);
+        window.dispatchEvent(new StorageEvent('storage', { key: PROGRESS_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function updateGlobalMessage() {
+        let progress = calculateProgress();
+        const globalDiv = document.getElementById('globalFeedback');
+        if (progress === 100) {
+            globalDiv.innerHTML = "🎉 Отлично! Все типы экранирования определены верно. Прогресс сохранён!";
+            globalDiv.style.background = "#c8e6d9";
+            globalDiv.style.color = "#1e5a3a";
+        } else {
+            globalDiv.innerHTML = `📊 Прогресс: ${progress}% правильных ответов. Продолжайте!`;
+            globalDiv.style.background = "#eef2f5";
+            globalDiv.style.color = "#1f5e8c";
+        }
+    }
+
+    function saveAndUpdate() {
+        saveSelections();
+        updateProgressUI();
+        saveProgressToLocalStorage();
+        updateGlobalMessage();
+    }
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function getRandomOptions() {
+        return shuffleArray([...allTypes]);
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('cablesGrid');
+        grid.innerHTML = '';
+
+        cableData.forEach(cable => {
+            const card = document.createElement('div');
+            card.className = 'cable-card';
+
+            const imgSrc = cable.img;
+            const imgOnError = `this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='80' viewBox='0 0 100 80'%3E%3Crect width='100' height='80' fill='%23eef2f7'/%3E%3Ctext x='15' y='45' fill='%236b7f8f' font-size='12'%3E${cable.id}%3C/text%3E%3C/svg%3E';`;
+
+            const select = document.createElement('select');
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = "-- выберите тип --";
+            select.appendChild(defaultOpt);
+            
+            const randomOptions = getRandomOptions();
+            randomOptions.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                if (selections[cable.id] === type) option.selected = true;
+                select.appendChild(option);
+            });
+            
+            select.addEventListener('change', (e) => {
+                selections[cable.id] = e.target.value;
+                const fbDiv = document.getElementById(`fb-${cable.id}`);
+                if (fbDiv) fbDiv.innerHTML = "⚡ Не проверено";
+                saveAndUpdate();
+            });
+
+            card.innerHTML = `
+                <div class="card-img">
+                    <img src="${imgSrc}" alt="Кабель" style="max-width:100%; max-height:130px;" onerror="${imgOnError}">
+                </div>
+                <div class="card-content">
+                    <div class="select-group"></div>
+                    <button class="check-btn" data-id="${cable.id}" data-correct="${cable.correctType}">🔍 Проверить</button>
+                    <div class="card-feedback" id="fb-${cable.id}">⚡ Не проверено</div>
+                </div>
+            `;
+            
+            const selectGroup = card.querySelector('.select-group');
+            selectGroup.appendChild(select);
+            grid.appendChild(card);
+
+            const btn = card.querySelector('.check-btn');
+            btn.addEventListener('click', () => {
+                const selectedValue = selections[cable.id];
+                const fbDiv = document.getElementById(`fb-${cable.id}`);
+                if (!selectedValue) {
+                    fbDiv.innerHTML = "❌ Сначала выберите тип экранирования!";
+                    fbDiv.classList.add('wrong-feedback');
+                    fbDiv.classList.remove('correct-feedback');
+                    saveAndUpdate();
+                    return;
+                }
+                if (selectedValue === cable.correctType) {
+                    fbDiv.innerHTML = "✅ Верно! Тип экранирования определён правильно.";
+                    fbDiv.classList.add('correct-feedback');
+                    fbDiv.classList.remove('wrong-feedback');
+                } else {
+                    fbDiv.innerHTML = `❌ Неверно. Вы выбрали "${selectedValue}", а правильный тип — "${cable.correctType}". Посмотрите на конструкцию кабеля.`;
+                    fbDiv.classList.add('wrong-feedback');
+                    fbDiv.classList.remove('correct-feedback');
+                }
+                saveAndUpdate();
+            });
+        });
+    }
+
+    function checkAllCables() {
+        let totalCount = 0, correctCount = 0;
+        for (let cable of cableData) {
+            const isOk = (selections[cable.id] === cable.correctType);
+            totalCount++;
+            if (isOk) correctCount++;
+            const fbDiv = document.getElementById(`fb-${cable.id}`);
+            if (fbDiv) {
+                if (isOk) {
+                    fbDiv.innerHTML = "✅ Верно! Тип экранирования определён правильно.";
+                    fbDiv.classList.add('correct-feedback');
+                    fbDiv.classList.remove('wrong-feedback');
+                } else if (selections[cable.id]) {
+                    fbDiv.innerHTML = `❌ Неверно. Вы выбрали "${selections[cable.id]}", а правильный тип — "${cable.correctType}".`;
+                    fbDiv.classList.add('wrong-feedback');
+                    fbDiv.classList.remove('correct-feedback');
+                } else {
+                    fbDiv.innerHTML = "❌ Не выбран тип экранирования.";
+                    fbDiv.classList.add('wrong-feedback');
+                    fbDiv.classList.remove('correct-feedback');
+                }
+            }
+        }
+        saveAndUpdate();
+        const globalDiv = document.getElementById('globalFeedback');
+        if (correctCount === totalCount) {
+            globalDiv.innerHTML = "🏆 Отлично! Все типы экранирования определены верно!";
+            globalDiv.style.background = "#c8e6d9";
+            globalDiv.style.color = "#1e5a3a";
+        } else {
+            globalDiv.innerHTML = `📊 Результат: правильно определено ${correctCount} из ${totalCount} типов. Проверьте ошибочные карточки.`;
+            globalDiv.style.background = "#fff0e0";
+            globalDiv.style.color = "#b65c2e";
+        }
+    }
+
+    function resetAll() {
+        if (confirm('Сбросить весь прогресс этого задания? Восстановить будет невозможно.')) {
+            for (let cable of cableData) {
+                selections[cable.id] = "";
+            }
+            saveSelections();
+            renderCards();
+            saveAndUpdate();
+            document.getElementById('globalFeedback').innerHTML = "🔄 Все данные сброшены. Вы можете начать заново.";
+            document.getElementById('globalFeedback').style.background = "#eef2f5";
+            document.getElementById('globalFeedback').style.color = "#1f5e8c";
+        }
+    }
+
+    function saveAndGoHome() {
+        saveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    // ========== СЛУШАЕМ ГЛОБАЛЬНЫЙ СБРОС С ГЛАВНОЙ СТРАНИЦЫ ==========
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            localStorage.removeItem(PROGRESS_KEY);
+            localStorage.removeItem(SELECTIONS_KEY);
+            window.location.reload();
+        }
+    });
+
+    loadSelections();
+    renderCards();
+    saveAndUpdate();
+    document.getElementById('globalCheckBtn').addEventListener('click', checkAllCables);
+    document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+    document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+</script>
+</body>
+</html>

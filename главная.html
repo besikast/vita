@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Главная | Мастер года: Сетевое и системное администрирование</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0a0a0a;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            overflow: hidden;
+            padding: 28px 32px 40px;
+            border: 1px solid #f5c518;
+        }
+        .topic-header {
+            background: #1a1a1a;
+            border-radius: 32px;
+            padding: 24px 32px;
+            margin-bottom: 32px;
+            color: #f5c518;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border-left: 8px solid #f5c518;
+        }
+        .topic-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; color: #f5c518; }
+        .topic-header p { font-size: 1rem; opacity: 0.85; color: #dddddd; }
+        .theme-setup {
+            background: #fef9e6;
+            border-radius: 32px;
+            padding: 24px 28px;
+            margin-bottom: 32px;
+            border: 2px solid #f5c518;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .theme-input-group { flex: 3; min-width: 240px; }
+        .theme-input-group label { display: block; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; font-size: 0.9rem; }
+        .theme-input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 60px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            background: white;
+        }
+        .theme-input-group input:focus { outline: none; border-color: #f5c518; }
+        .theme-setup button {
+            background: #1a1a1a;
+            border: none;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 14px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 1rem;
+            border: 1px solid #f5c518;
+        }
+        .theme-setup button:hover { background: #f5c518; color: #1a1a1a; transform: scale(0.97); }
+        .fixed-theme {
+            background: #f5f5f5;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-top: 12px;
+            display: inline-block;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-left: 6px solid #f5c518;
+        }
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .task-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+        .task-card:hover { transform: translateY(-5px); border-color: #f5c518; }
+        .card-header {
+            background: #fef9e6;
+            padding: 16px 20px;
+            border-bottom: 2px solid #f5c518;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-header .emoji { font-size: 1.6rem; }
+        .card-header h3 { font-size: 1.2rem; color: #1a1a1a; font-weight: 700; }
+        .card-body { padding: 20px; }
+        .progress-section { margin-bottom: 16px; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #f5c518;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .score-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-top: 10px;
+            text-align: right;
+        }
+        .open-btn {
+            background: #1a1a1a;
+            border: none;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 10px 0;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            border: 1px solid #f5c518;
+        }
+        .open-btn:hover { background: #f5c518; color: #1a1a1a; transform: scale(0.98); }
+        .final-result {
+            background: #1a1a1a;
+            border-radius: 32px;
+            padding: 24px 28px;
+            margin-top: 20px;
+            border-left: 8px solid #f5c518;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+        .final-text h3 { font-size: 1.3rem; color: #f5c518; margin-bottom: 8px; }
+        .final-text p { color: #dddddd; font-weight: 500; }
+        .final-grade {
+            background: #2a2a2a;
+            border-radius: 60px;
+            padding: 12px 28px;
+            text-align: center;
+            border: 1px solid #f5c518;
+        }
+        .grade-value { font-size: 2.2rem; font-weight: 800; color: #f5c518; }
+        .reset-all {
+            background: #2a2a2a;
+            border: 1px solid #f5c518;
+            color: #f5c518;
+            padding: 8px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 16px;
+        }
+        .reset-all:hover { background: #f5c518; color: #1a1a1a; }
+        footer { text-align: center; margin-top: 30px; font-size: 0.75rem; color: #6c6c6c; }
+        @media (max-width: 750px) {
+            .container { padding: 16px; }
+            .final-result { flex-direction: column; text-align: center; }
+            .theme-setup { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="topic-header">
+        <p>Специальность: 09.02.06 «Сетевое и системное администрирование» | 2 курс | Преподаватель: Ушакова Ю.И.</p>
+    </div>
+
+    <div class="theme-setup" id="themeSetupBlock">
+        <div class="theme-input-group">
+            <label>✏️ Введите тему занятия (своими словами):</label>
+            <input type="text" id="themeInput" value="">
+        </div>
+        <button id="fixThemeBtn">📌 Зафиксировать тему</button>
+    </div>
+    <div id="fixedThemeDisplay" class="fixed-theme" style="display: none;"></div>
+
+    <div class="tasks-grid" id="tasksGrid"></div>
+
+    <div class="final-result" id="finalResult">
+        <div class="final-text">
+            <h3>📊 Итоговая оценка за занятие</h3>
+            <p>После выполнения всех интерактивных заданий здесь появится ваш результат и рекомендации.</p>
+        </div>
+        <div class="final-grade">
+            <div class="grade-value" id="gradeValue">— / 100</div>
+            <div style="font-size:0.75rem;">общий прогресс</div>
+        </div>
+        <button id="resetGlobalBtn" class="reset-all">🔄 Сбросить весь прогресс</button>
+    </div>
+    <footer>💡 Каждое задание сохраняет прогресс автоматически. Выполните все модули, чтобы получить итоговую оценку.</footer>
+</div>
+
+<script>
+    // ========== КОНФИГУРАЦИЯ СТРАНИЦ (с эмодзи в начале) ==========
+    const modules = [
+        { title: "🏛️ Модель OSI", file: "Модель OSI.html", storageKey: "osi_pyramid_progress" },
+        { title: "⚠️ Диагностика сети", file: "Диагностика сети.html", storageKey: "network_diagnostic_progress" },
+        { title: "📀 Кабели типа витая пара", file: "Кабели типа витая пара.html", storageKey: "cable_categories_progress" },
+        { title: "🛡️ Типы экранирования витой пары", file: "Типы экранирования витой пары.html", storageKey: "shielding_types_progress" },
+        { title: "📐 Расчёт длины кабеля", file: "Расчёт длины кабеля.html", storageKey: "cable_length_progress" },
+        { title: "🔌 Типы обжима", file: "Типы обжима.html", storageKey: "crimping_types_progress" },
+        { title: "🔧 Изготовление патч-корда", file: "Изготовление патч-корда.html", storageKey: "patchcord_checklist" },
+        { title: "🏆 Итоги", file: "Итоги.html", storageKey: "final_results" }
+    ];
+
+    // Дополнительные ключи, которые нужно очищать при сбросе
+    const ADDITIONAL_KEYS = [
+        "cable_categories_selections",
+        "shielding_types_selections",
+        "crimping_selections",
+        "fixed_lesson_theme",
+        "osi_pyramid_progress_pyramid",
+        "osi_pyramid_progress_tech",
+        "cable_length_state",
+        "patchcord_checklist_states",
+        "final_reflection_state"
+    ];
+
+    function getProgress(key) {
+        let saved = localStorage.getItem(key);
+        if (!saved) return 0;
+        try {
+            let val = JSON.parse(saved);
+            if (typeof val === 'number') return Math.min(100, Math.max(0, val));
+            if (val && typeof val.progress === 'number') return Math.min(100, Math.max(0, val.progress));
+            return 0;
+        } catch(e) {
+            let num = Number(saved);
+            return isNaN(num) ? 0 : Math.min(100, Math.max(0, num));
+        }
+    }
+
+    function renderTasks() {
+        const grid = document.getElementById('tasksGrid');
+        grid.innerHTML = '';
+        modules.forEach(mod => {
+            let progress = getProgress(mod.storageKey);
+            let card = document.createElement('div');
+            card.className = 'task-card';
+            // Показываем полное название с эмодзи
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="emoji">${mod.title.charAt(0)}</span>
+                    <h3>${mod.title}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="progress-section">
+                        <div class="progress-label"><span>Выполнение</span><span>${progress}%</span></div>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: ${progress}%;"></div></div>
+                    </div>
+                    <div class="score-text">${progress >= 100 ? '✅ Завершено' : (progress > 0 ? '⚠️ Частично' : '🔘 Не начато')}</div>
+                    <button class="open-btn" data-file="${mod.file}">🚀 Открыть задание</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        document.querySelectorAll('.open-btn').forEach(btn => {
+            btn.addEventListener('click', () => window.location.href = btn.getAttribute('data-file'));
+        });
+        updateFinalResult();
+    }
+
+    function updateFinalResult() {
+        let total = 0, completed = 0;
+        modules.forEach(mod => {
+            let p = getProgress(mod.storageKey);
+            total += p;
+            if (p >= 100) completed++;
+        });
+        let avg = modules.length ? Math.round(total / modules.length) : 0;
+        document.getElementById('gradeValue').innerHTML = `${avg} / 100`;
+        let msg = '', rec = '';
+        if (avg >= 90) { msg = '🎉 Блестящий результат! Вы отлично освоили тему.'; rec = 'Можете углублённо изучать стандарты Cat7/Cat8.'; }
+        else if (avg >= 70) { msg = '👍 Хороший результат! Есть небольшие пробелы.'; rec = 'Повторите типы экранирования и расчёт длины.'; }
+        else if (avg >= 50) { msg = '📘 Удовлетворительно. Практические навыки требуют доработки.'; rec = 'Пройдите заново диагностику и обжим.'; }
+        else if (avg > 0) { msg = '⚠️ Начальный уровень. Нужно больше практики.'; rec = 'Изучите справочную информацию на каждой странице.'; }
+        else { msg = '📌 Вы ещё не приступили к заданиям.'; rec = 'Начните с пирамиды OSI.'; }
+        document.querySelector('.final-text p').innerHTML = `<strong>${msg}</strong><br><span style="font-size:0.85rem;">${rec}</span>`;
+        let oldBadge = document.querySelector('.perfect-badge');
+        if (oldBadge) oldBadge.remove();
+        if (completed === modules.length && avg === 100) {
+            let badge = document.createElement('div');
+            badge.className = 'perfect-badge';
+            badge.style.marginTop = '12px';
+            badge.style.background = '#f5c518';
+            badge.style.color = '#1a1a1a';
+            badge.style.padding = '6px 14px';
+            badge.style.borderRadius = '40px';
+            badge.style.display = 'inline-block';
+            badge.style.fontWeight = 'bold';
+            badge.innerText = '🏆 МАСТЕР ГОДА В ОБУЧЕНИИ! Все модули выполнены идеально! 🏆';
+            document.querySelector('.final-text').appendChild(badge);
+        }
+    }
+
+    // ТЕМА
+    const THEME_KEY = "fixed_lesson_theme";
+    function saveTheme(t) { if (t && t.trim()) localStorage.setItem(THEME_KEY, t.trim()); else localStorage.removeItem(THEME_KEY); }
+    function loadTheme() { return localStorage.getItem(THEME_KEY); }
+    function updateThemeUI() {
+        let saved = loadTheme();
+        let setup = document.getElementById('themeSetupBlock');
+        let display = document.getElementById('fixedThemeDisplay');
+        if (saved) {
+            setup.style.display = 'none';
+            display.style.display = 'block';
+            display.innerHTML = `📌 Тема занятия (зафиксирована): <strong>${saved}</strong>`;
+        } else {
+            setup.style.display = 'flex';
+            display.style.display = 'none';
+            document.getElementById('themeInput').value = '';
+        }
+    }
+    document.getElementById('fixThemeBtn').addEventListener('click', () => {
+        let val = document.getElementById('themeInput').value.trim();
+        if (!val) { alert("Введите тему занятия."); return; }
+        saveTheme(val);
+        updateThemeUI();
+    });
+
+    // ========== ГЛОБАЛЬНЫЙ СБРОС ==========
+    document.getElementById('resetGlobalBtn').addEventListener('click', () => {
+        if (confirm('Сбросить весь прогресс и тему? Это действие нельзя отменить.')) {
+            // Очищаем основные ключи модулей
+            modules.forEach(m => localStorage.removeItem(m.storageKey));
+            // Очищаем дополнительные ключи (сохранённые выборы и т.д.)
+            ADDITIONAL_KEYS.forEach(key => localStorage.removeItem(key));
+            // Очищаем тему
+            localStorage.removeItem(THEME_KEY);
+            
+            // Отправляем событие для всех открытых страниц
+            localStorage.setItem('GLOBAL_RESET_TRIGGER', Date.now().toString());
+            // Небольшая задержка, чтобы событие успело отправиться
+            setTimeout(() => {
+                localStorage.removeItem('GLOBAL_RESET_TRIGGER');
+            }, 100);
+            
+            updateThemeUI();
+            renderTasks();
+            alert('Весь прогресс сброшен. Можете начинать заново.');
+        }
+    });
+    
+    window.addEventListener('pageshow', function() {
+        renderTasks();
+        updateFinalResult();
+    });
+    
+    window.addEventListener('load', () => { updateThemeUI(); renderTasks(); });
+    window.addEventListener('storage', (e) => {
+        if (modules.some(m => m.storageKey === e.key) || e.key === THEME_KEY) {
+            updateThemeUI();
+            renderTasks();
+        }
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            renderTasks();
+            updateFinalResult();
+            updateThemeUI();
+        }
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { updateThemeUI(); renderTasks(); } });
+</script>
+</body>
+</html>

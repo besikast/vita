@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Модель OSI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 20px 24px 30px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 4px 0;
+            color: #0f3b5f;
+        }
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 24px 0;
+            font-weight: 500;
+        }
+        .game-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-bottom: 40px;
+            background: #fefefe;
+            border-radius: 28px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .left-panel {
+            flex: 1.2;
+            min-width: 280px;
+            background: #fefaf5;
+            border-radius: 28px;
+            padding: 12px;
+        }
+        .right-panel {
+            flex: 1.4;
+            min-width: 280px;
+            background: #f8fafd;
+            border-radius: 28px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0 0 12px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #ff8c42;
+            padding-left: 12px;
+        }
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin: 10px 0;
+        }
+        .pyramid-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .level-slot {
+            background: #fff5e6;
+            border: 2px dashed #c0cfde;
+            border-radius: 20px;
+            padding: 10px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            transition: all 0.1s;
+        }
+        .level-slot[data-level="7"] { width: 170px; }
+        .level-slot[data-level="6"] { width: 210px; }
+        .level-slot[data-level="5"] { width: 250px; }
+        .level-slot[data-level="4"] { width: 290px; }
+        .level-slot[data-level="3"] { width: 330px; }
+        .level-slot[data-level="2"] { width: 370px; }
+        .level-slot[data-level="1"] { width: 410px; background: #ffe6cc; border-color: #ffaa66; }
+        .level-slot.filled {
+            background: #e0f0e8;
+            border: 2px solid #2c8c5a;
+            color: #1d4d33;
+        }
+        .level-number {
+            font-weight: 800;
+            background: #1e4663;
+            color: white;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+        .slot-text {
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+        }
+        .remove-level-btn {
+            background: none;
+            border: none;
+            color: #aa6f5e;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 26px;
+            border-radius: 30px;
+        }
+        .level-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .zone-card {
+            background: #f9f9fc;
+            border-radius: 20px;
+            padding: 10px 12px;
+            border: 1px solid #dee4ed;
+        }
+        .zone-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .zone-badge {
+            background: #2c5a7a;
+            color: white;
+            border-radius: 30px;
+            padding: 2px 12px;
+            font-size: 0.75rem;
+        }
+        .drop-zone {
+            background: #f1f5f9;
+            border: 2px dotted #7f8c8d;
+            border-radius: 18px;
+            min-height: 70px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            transition: 0.1s;
+        }
+        .drop-zone.drag-over {
+            background: #d9e6f5;
+            border-color: #ff8c42;
+        }
+        .zone-item {
+            background: #1e4663;
+            color: white;
+            border-radius: 40px;
+            padding: 5px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ffb3b3;
+            cursor: pointer;
+            margin-left: 6px;
+            font-weight: bold;
+        }
+        .drag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #fafafc;
+            padding: 16px;
+            border-radius: 28px;
+            min-height: 130px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+        .drag-item {
+            background: white;
+            border-radius: 60px;
+            padding: 8px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: grab;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+        }
+        .drag-item:active { cursor: grabbing; }
+        button {
+            background: #2c5a7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin: 4px;
+        }
+        button:hover { background: #1f4460; transform: scale(0.97); }
+        .reset-btn { background: #5f6c7a; }
+        .check-line-btn { background: #3a7ca5; }
+        .feedback {
+            margin-top: 12px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 12px 18px;
+            font-weight: 500;
+            white-space: pre-line;
+            font-size: 0.9rem;
+        }
+        .success { background: #c8e6d9; color: #1e5a3a; }
+        .error { background: #ffe0db; color: #b13e3e; }
+        .info { background: #e0ecf5; color: #1f5e8c; }
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+        }
+        footer {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #6c86a3;
+        }
+        @media (max-width: 800px) {
+            .level-slot[data-level] { width: 95% !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📡 Модель OSI: собери пирамиду</h1>
+    <div class="sub">🔌 Перетащите названия уровней в слоты пирамиды. Затем распределите оборудование по уровням 1–3.</div>
+
+    <!-- Индикатор прогресса -->
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="game-row">
+        <div class="left-panel">
+            <div class="panel-title">🏛️ Пирамида OSI (уровни 1-7)</div>
+            <div id="pyramidContainer" class="pyramid"></div>
+        </div>
+        <div class="right-panel">
+            <div class="panel-title">📋 Названия уровней (перетащи в пирамиду)</div>
+            <div id="levelNamesPool" class="drag-grid"></div>
+            <div style="text-align: center;">
+                <button id="checkPyramidBtn" class="check-line-btn">✅ Проверить ПИРАМИДУ</button>
+            </div>
+            <div id="pyramidFeedback" class="feedback info">📌 Нажмите «Проверить пирамиду»</div>
+        </div>
+    </div>
+
+    <div class="game-row">
+        <div class="left-panel">
+            <div class="panel-title">🎯 Уровни 1–3 (сопоставь оборудование)</div>
+            <div class="level-zones">
+                <div class="zone-card"><div class="zone-title"><span class="zone-badge">Уровень 1</span> 🔌 Физический уровень</div><div id="dropZone1" class="drop-zone" data-level="1"></div></div>
+                <div class="zone-card"><div class="zone-title"><span class="zone-badge">Уровень 2</span> 🔗 Канальный уровень</div><div id="dropZone2" class="drop-zone" data-level="2"></div></div>
+                <div class="zone-card"><div class="zone-title"><span class="zone-badge">Уровень 3</span> 🌐 Сетевой уровень</div><div id="dropZone3" class="drop-zone" data-level="3"></div></div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="panel-title">🖥️ Оборудование / технологии (перетащи в зоны слева)</div>
+            <div id="techPool" class="drag-grid"></div>
+            <div style="text-align: center;">
+                <button id="checkTechBtn" class="check-line-btn">✅ Проверить УРОВНИ 1-3</button>
+            </div>
+            <div id="techFeedback" class="feedback info">📌 Нажмите «Проверить уровни 1-3»</div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="resetAllBtn" class="reset-btn">🔄 Сбросить ВСЁ (только это задание)</button>
+        <button id="saveAndGoHomeBtn" style="background: #ff8c42;">🏠 Сохранить и на главную</button>
+    </div>
+    <div id="globalFeedback" class="feedback info" style="margin-top: 8px;"></div>
+    <footer>💡 Перетащи название уровня в пустой слот пирамиды. Оборудование — в цветные зоны. Прогресс сохраняется автоматически!</footer>
+</div>
+
+<script>
+    // ========== КЛЮЧ ДЛЯ ХРАНЕНИЯ ПРОГРЕССА ==========
+    const PAGE_STORAGE_KEY = "osi_pyramid_progress";
+
+    // ========== ДАННЫЕ ==========
+    const levelNumberToName = {
+        1: "Физический", 2: "Канальный", 3: "Сетевой",
+        4: "Транспортный", 5: "Сеансовый", 6: "Уровень представления", 7: "Прикладной"
+    };
+    const allLevelNames = Object.values(levelNumberToName);
+
+    const techItems = [
+        { id: "hub", name: "Хаб (Hub)", correctLevel: 1, icon: "🔌" },
+        { id: "utp", name: "Витая пара", correctLevel: 1, icon: "📀" },
+        { id: "rj45", name: "Коннектор RJ-45", correctLevel: 1, icon: "🔌" },
+        { id: "switch", name: "Коммутатор (Switch)", correctLevel: 2, icon: "🔁" },
+        { id: "mac", name: "MAC-адрес", correctLevel: 2, icon: "🏷️" },
+        { id: "router", name: "Маршрутизатор (Router)", correctLevel: 3, icon: "🌍" },
+        { id: "ip", name: "IP-адрес", correctLevel: 3, icon: "🌐" }
+    ];
+
+    let pyramidState = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
+    let techAssignments = { 1: [], 2: [], 3: [] };
+
+    // DOM элементы
+    let pyramidContainer, levelNamesPoolDiv, techPoolDiv;
+    const dropZones = {
+        1: document.getElementById('dropZone1'),
+        2: document.getElementById('dropZone2'),
+        3: document.getElementById('dropZone3')
+    };
+    const pyramidFeedbackDiv = document.getElementById('pyramidFeedback');
+    const techFeedbackDiv = document.getElementById('techFeedback');
+    const globalFeedbackDiv = document.getElementById('globalFeedback');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    // ========== ФУНКЦИИ ПРОГРЕССА ==========
+    function calculateProgress() {
+        let pyramidCorrect = true;
+        for (let lvl = 1; lvl <= 7; lvl++) {
+            if (pyramidState[lvl] !== levelNumberToName[lvl]) {
+                pyramidCorrect = false;
+                break;
+            }
+        }
+        let techCorrect = true;
+        for (let tech of techItems) {
+            let placedLevel = null;
+            for (let lvl = 1; lvl <= 3; lvl++) {
+                if (techAssignments[lvl].includes(tech.id)) {
+                    placedLevel = lvl;
+                    break;
+                }
+            }
+            if (placedLevel !== tech.correctLevel) {
+                techCorrect = false;
+                break;
+            }
+        }
+        if (pyramidCorrect && techCorrect) return 100;
+        if (pyramidCorrect || techCorrect) return 50;
+        return 0;
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        progressFill.style.width = progress + '%';
+        progressText.innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveProgressToLocalStorage() {
+        let progress = calculateProgress();
+        localStorage.setItem(PAGE_STORAGE_KEY, JSON.stringify(progress));
+        console.log(`💾 Сохранён прогресс OSI: ${progress}%`);
+        window.dispatchEvent(new StorageEvent('storage', { key: PAGE_STORAGE_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveProgressToLocalStorage();
+        if (progress === 100) {
+            globalFeedbackDiv.innerHTML = "🎉 Отлично! Задание полностью выполнено. Прогресс сохранён!";
+            globalFeedbackDiv.classList.add('success');
+            globalFeedbackDiv.classList.remove('error', 'info');
+        } else if (progress === 50) {
+            globalFeedbackDiv.innerHTML = "⚠️ Выполнена половина задания. Продолжайте!";
+            globalFeedbackDiv.classList.add('info');
+            globalFeedbackDiv.classList.remove('success', 'error');
+        } else {
+            globalFeedbackDiv.innerHTML = "📌 Продолжайте выполнять задание. Прогресс автоматически сохраняется.";
+            globalFeedbackDiv.classList.add('info');
+            globalFeedbackDiv.classList.remove('success', 'error');
+        }
+    }
+
+    // Загрузка сохранённых данных (восстановление состояния)
+    function loadSavedState() {
+        const savedPyramid = localStorage.getItem(PAGE_STORAGE_KEY + "_pyramid");
+        const savedTech = localStorage.getItem(PAGE_STORAGE_KEY + "_tech");
+        if (savedPyramid) {
+            try {
+                const loaded = JSON.parse(savedPyramid);
+                for (let lvl in loaded) pyramidState[lvl] = loaded[lvl];
+            } catch(e) {}
+        }
+        if (savedTech) {
+            try {
+                const loaded = JSON.parse(savedTech);
+                for (let lvl in loaded) techAssignments[lvl] = loaded[lvl];
+            } catch(e) {}
+        }
+    }
+
+    function saveFullState() {
+        localStorage.setItem(PAGE_STORAGE_KEY + "_pyramid", JSON.stringify(pyramidState));
+        localStorage.setItem(PAGE_STORAGE_KEY + "_tech", JSON.stringify(techAssignments));
+        autoSaveAndUpdate();
+    }
+
+    // ========== ОСНОВНЫЕ ФУНКЦИИ ИГРЫ ==========
+    function showGlobalFeedback(msg, type) {
+        globalFeedbackDiv.innerText = msg;
+        globalFeedbackDiv.classList.remove('success', 'error', 'info');
+        if (type === 'success') globalFeedbackDiv.classList.add('success');
+        else if (type === 'error') globalFeedbackDiv.classList.add('error');
+        else globalFeedbackDiv.classList.add('info');
+    }
+    function showPyramidFeedback(msg, type) {
+        pyramidFeedbackDiv.innerText = msg;
+        pyramidFeedbackDiv.classList.remove('success', 'error', 'info');
+        if (type === 'success') pyramidFeedbackDiv.classList.add('success');
+        else if (type === 'error') pyramidFeedbackDiv.classList.add('error');
+        else pyramidFeedbackDiv.classList.add('info');
+    }
+    function showTechFeedback(msg, type) {
+        techFeedbackDiv.innerText = msg;
+        techFeedbackDiv.classList.remove('success', 'error', 'info');
+        if (type === 'success') techFeedbackDiv.classList.add('success');
+        else if (type === 'error') techFeedbackDiv.classList.add('error');
+        else techFeedbackDiv.classList.add('info');
+    }
+
+    function renderPyramid() {
+        pyramidContainer = document.getElementById('pyramidContainer');
+        pyramidContainer.innerHTML = '';
+        const levelsOrder = [7,6,5,4,3,2,1];
+        for (let lvl of levelsOrder) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'pyramid-row';
+            const slot = document.createElement('div');
+            slot.className = 'level-slot';
+            slot.setAttribute('data-level', lvl);
+            slot.setAttribute('data-level-target', lvl);
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'level-number';
+            numberSpan.innerText = lvl;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'slot-text';
+            const assignedName = pyramidState[lvl];
+            if (assignedName) {
+                textSpan.innerText = assignedName;
+                slot.classList.add('filled');
+            } else {
+                textSpan.innerText = '____________';
+                slot.classList.remove('filled');
+            }
+            slot.appendChild(numberSpan);
+            slot.appendChild(textSpan);
+            if (assignedName) {
+                const removeBtn = document.createElement('button');
+                removeBtn.innerText = '✖';
+                removeBtn.className = 'remove-level-btn';
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pyramidState[lvl] = null;
+                    renderPyramid();
+                    renderLevelNamesPool();
+                    saveFullState();
+                    showGlobalFeedback(`Название "${assignedName}" возвращено`, 'success');
+                    showPyramidFeedback('Пирамида изменена', 'info');
+                };
+                slot.appendChild(removeBtn);
+            }
+            slot.addEventListener('dragover', (e) => e.preventDefault());
+            slot.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const targetLevel = parseInt(slot.getAttribute('data-level-target'));
+                const rawData = e.dataTransfer.getData('text/plain');
+                if (!rawData) return;
+                try {
+                    const dragObj = JSON.parse(rawData);
+                    if (dragObj.type === 'levelName') {
+                        const levelName = dragObj.value;
+                        if (pyramidState[targetLevel]) { showGlobalFeedback(`Уровень ${targetLevel} уже занят`, 'error'); return; }
+                        const alreadyUsed = Object.values(pyramidState).some(v => v === levelName);
+                        if (alreadyUsed) { showGlobalFeedback(`Название "${levelName}" уже используется`, 'error'); return; }
+                        pyramidState[targetLevel] = levelName;
+                        renderPyramid();
+                        renderLevelNamesPool();
+                        saveFullState();
+                        showGlobalFeedback(`✅ "${levelName}" на уровень ${targetLevel}`, 'success');
+                        showPyramidFeedback('Обновлено', 'info');
+                    }
+                } catch(err) {}
+            });
+            rowDiv.appendChild(slot);
+            pyramidContainer.appendChild(rowDiv);
+        }
+    }
+
+    function renderLevelNamesPool() {
+        levelNamesPoolDiv = document.getElementById('levelNamesPool');
+        levelNamesPoolDiv.innerHTML = '';
+        const usedNames = Object.values(pyramidState).filter(v => v !== null);
+        const remaining = allLevelNames.filter(name => !usedNames.includes(name));
+        remaining.forEach(name => {
+            const dragEl = document.createElement('div');
+            dragEl.className = 'drag-item';
+            dragEl.innerText = name;
+            dragEl.setAttribute('draggable', 'true');
+            dragEl.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'levelName', value: name }));
+                dragEl.classList.add('dragging');
+            });
+            dragEl.addEventListener('dragend', () => dragEl.classList.remove('dragging'));
+            levelNamesPoolDiv.appendChild(dragEl);
+        });
+    }
+
+    function renderTechPool() {
+        techPoolDiv = document.getElementById('techPool');
+        techPoolDiv.innerHTML = '';
+        const placedIds = [...techAssignments[1], ...techAssignments[2], ...techAssignments[3]];
+        const available = techItems.filter(t => !placedIds.includes(t.id));
+        available.forEach(tech => {
+            const dragEl = document.createElement('div');
+            dragEl.className = 'drag-item';
+            dragEl.innerHTML = `${tech.icon} ${tech.name}`;
+            dragEl.setAttribute('draggable', 'true');
+            dragEl.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'tech', id: tech.id, name: tech.name }));
+                dragEl.classList.add('dragging');
+            });
+            dragEl.addEventListener('dragend', () => dragEl.classList.remove('dragging'));
+            techPoolDiv.appendChild(dragEl);
+        });
+    }
+
+    function renderTechZones() {
+        for (let lvl = 1; lvl <= 3; lvl++) {
+            const zone = dropZones[lvl];
+            if (!zone) continue;
+            zone.innerHTML = '';
+            techAssignments[lvl].forEach(techId => {
+                const tech = techItems.find(t => t.id === techId);
+                if (tech) {
+                    const chip = document.createElement('div');
+                    chip.className = 'zone-item';
+                    chip.innerHTML = `${tech.icon} ${tech.name} <button class="remove-btn" data-tech-id="${tech.id}" data-level="${lvl}">✖</button>`;
+                    chip.querySelector('.remove-btn').onclick = () => {
+                        const idx = techAssignments[lvl].indexOf(tech.id);
+                        if (idx !== -1) techAssignments[lvl].splice(idx, 1);
+                        renderTechZones();
+                        renderTechPool();
+                        saveFullState();
+                        showGlobalFeedback(`"${tech.name}" возвращён`, 'success');
+                        showTechFeedback('Распределение изменено', 'info');
+                    };
+                    zone.appendChild(chip);
+                }
+            });
+        }
+        attachDropZonesEvents();
+    }
+
+    function attachDropZonesEvents() {
+        for (let lvl = 1; lvl <= 3; lvl++) {
+            const zone = dropZones[lvl];
+            if (!zone) continue;
+            zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('drag-over'); };
+            zone.ondragleave = () => zone.classList.remove('drag-over');
+            zone.ondrop = (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const rawData = e.dataTransfer.getData('text/plain');
+                if (!rawData) return;
+                try {
+                    const dragObj = JSON.parse(rawData);
+                    if (dragObj.type === 'tech') {
+                        const tech = techItems.find(t => t.id === dragObj.id);
+                        if (!tech) return;
+                        let already = false;
+                        for (let l = 1; l <= 3; l++) if (techAssignments[l].includes(tech.id)) already = true;
+                        if (already) { showGlobalFeedback(`❌ ${tech.name} уже размещён`, 'error'); return; }
+                        techAssignments[lvl].push(tech.id);
+                        renderTechZones();
+                        renderTechPool();
+                        saveFullState();
+                        showGlobalFeedback(`✓ ${tech.name} добавлен на ${lvl} уровень`, 'success');
+                        showTechFeedback('Оборудование добавлено', 'info');
+                    }
+                } catch(err) {}
+            };
+        }
+    }
+
+    function checkPyramid() {
+        let errors = [];
+        for (let lvl = 1; lvl <= 7; lvl++) {
+            const assigned = pyramidState[lvl];
+            const correct = levelNumberToName[lvl];
+            if (!assigned) errors.push(`⚠️ Уровень ${lvl} не заполнен`);
+            else if (assigned !== correct) errors.push(`❌ Уровень ${lvl}: "${assigned}" → должно быть "${correct}"`);
+        }
+        if (errors.length === 0) { showPyramidFeedback('✅ Пирамида верна!', 'success'); showGlobalFeedback('Пирамида: без ошибок', 'success'); }
+        else { showPyramidFeedback('❌ Ошибки:\n' + errors.join('\n'), 'error'); showGlobalFeedback('Пирамида содержит ошибки', 'error'); }
+        saveFullState();
+    }
+
+    function checkTechLevels() {
+        let errors = [];
+        for (let tech of techItems) {
+            let placed = null;
+            for (let lvl = 1; lvl <= 3; lvl++) if (techAssignments[lvl].includes(tech.id)) placed = lvl;
+            if (!placed) errors.push(`❌ ${tech.name} не размещён (нужен уровень ${tech.correctLevel})`);
+            else if (placed !== tech.correctLevel) errors.push(`❌ ${tech.name} на уровне ${placed}, должен на ${tech.correctLevel}`);
+        }
+        if (errors.length === 0) { showTechFeedback('✅ Распределение верно!', 'success'); showGlobalFeedback('Уровни 1-3: верно', 'success'); }
+        else { showTechFeedback('❌ Ошибки:\n' + errors.join('\n'), 'error'); showGlobalFeedback('Уровни 1-3 содержат ошибки', 'error'); }
+        saveFullState();
+    }
+
+    function resetAll() {
+        if (confirm('Сбросить весь прогресс этого задания? Восстановить будет невозможно.')) {
+            pyramidState = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
+            techAssignments = { 1: [], 2: [], 3: [] };
+            renderPyramid();
+            renderLevelNamesPool();
+            renderTechZones();
+            renderTechPool();
+            saveFullState();
+            showPyramidFeedback('📌 Пирамида сброшена.', 'info');
+            showTechFeedback('📌 Зоны очищены.', 'info');
+            showGlobalFeedback('🔄 Игра полностью сброшена.', 'success');
+        }
+    }
+
+    function saveAndGoHome() {
+        saveFullState();
+        window.location.href = "главная.html";
+    }
+
+    // Инициализация
+    function init() {
+        loadSavedState();
+        renderPyramid();
+        renderLevelNamesPool();
+        renderTechZones();
+        renderTechPool();
+        updateProgressUI();
+        document.getElementById('checkPyramidBtn').addEventListener('click', checkPyramid);
+        document.getElementById('checkTechBtn').addEventListener('click', checkTechLevels);
+        document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+        document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+        saveFullState();
+    }
+    init();
+</script>
+</body>
+</html>

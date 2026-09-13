@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Домашнее задание: Реальный заказ (печатный бланк)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Times New Roman', 'Segoe UI', serif;
+            background: #e0e0e0;
+            padding: 20px;
+            color: #000;
+        }
+
+        /* Кнопки управления (не печатаются) */
+        .controls {
+            max-width: 210mm;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .controls button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .btn-print { background: #2c5a7a; color: white; }
+        .btn-print:hover { background: #1f4460; }
+        .btn-home { background: #ff8c42; color: white; }
+        .btn-home:hover { background: #e67e2e; }
+
+        /* Лист А4 */
+        .sheet {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            padding: 15mm 18mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+
+        /* Шапка */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+        .header .org {
+            font-size: 10pt;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .header h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .header .subtitle {
+            font-size: 11pt;
+            font-style: italic;
+            color: #444;
+        }
+
+        /* Строка ученика */
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 16px;
+            font-size: 11pt;
+        }
+        .student-info .field {
+            flex: 1;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+        }
+        .student-info .field span {
+            font-weight: bold;
+        }
+
+        /* Блок задачи */
+        .task-block {
+            border: 2px solid #000;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            background: #f9f9f9;
+        }
+        .task-block .task-title {
+            font-weight: bold;
+            font-size: 12pt;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .task-block p {
+            font-size: 11pt;
+            margin-bottom: 4px;
+            text-align: justify;
+        }
+        .task-block .highlight {
+            background: #fff3b0;
+            padding: 0 2px;
+            font-weight: bold;
+        }
+
+        /* Шаги */
+        .step {
+            margin-bottom: 14px;
+            page-break-inside: avoid;
+        }
+        .step-title {
+            font-weight: bold;
+            font-size: 12pt;
+            background: #e8e8e8;
+            padding: 4px 10px;
+            border-left: 5px solid #000;
+            margin-bottom: 8px;
+        }
+        .step-subtitle {
+            font-size: 10pt;
+            color: #444;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+        /* Варианты ответов (квадратики) */
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 8px 0;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11pt;
+            cursor: default;
+        }
+        .options .box {
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid #000;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* Поля для заполнения */
+        .fill-line {
+            border-bottom: 1px solid #000;
+            min-height: 20px;
+            margin: 6px 0;
+            padding: 0 4px;
+        }
+        .fill-line.short { width: 60%; }
+        .fill-line.medium { width: 80%; }
+
+        .fill-label {
+            font-size: 10pt;
+            color: #333;
+            margin-top: 8px;
+            margin-bottom: 2px;
+            font-style: italic;
+        }
+
+        /* Расчётная таблица */
+        .calc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 11pt;
+        }
+        .calc-table th, .calc-table td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .calc-table th {
+            background: #e8e8e8;
+            font-weight: bold;
+            width: 60%;
+        }
+        .calc-table td {
+            height: 32px;
+            background: #fafafa;
+        }
+
+        /* Место для схемы */
+        .scheme-area {
+            border: 2px dashed #000;
+            height: 180px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-style: italic;
+            font-size: 11pt;
+            background: #fafafa;
+            position: relative;
+        }
+        .scheme-area::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.4;
+        }
+        .scheme-area span {
+            position: relative;
+            z-index: 1;
+            background: #fafafa;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        /* Подпись */
+        .signature {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            font-size: 11pt;
+            page-break-inside: avoid;
+        }
+        .signature .sig-field {
+            flex: 1;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+            text-align: center;
+            font-size: 10pt;
+            color: #444;
+        }
+
+        /* Подвал */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #ccc;
+            padding-top: 8px;
+            font-style: italic;
+        }
+
+        /* Разрыв страницы */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* ========== ПЕЧАТЬ ========== */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .controls {
+                display: none !important;
+            }
+            .sheet {
+                width: 100%;
+                min-height: auto;
+                margin: 0;
+                padding: 10mm 15mm;
+                box-shadow: none;
+            }
+            .task-block {
+                background: #f9f9f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .step-title {
+                background: #e8e8e8 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .calc-table th {
+                background: #e8e8e8 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .scheme-area {
+                background: #fafafa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sheet { width: 100%; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Кнопки управления (не печатаются) -->
+<div class="controls">
+    <button class="btn-print" onclick="window.print()">🖨️ Распечатать бланк</button>
+    <button class="btn-home" onclick="window.location.href='главная.html'">🏠 На главную</button>
+</div>
+
+<!-- ЛИСТ А4 -->
+<div class="sheet">
+
+    <!-- ШАПКА -->
+    <div class="header">
+        <div class="org">ГБПОУ «Колледж связи и информатики» · Специальность 09.02.06</div>
+        <h1>Домашнее задание</h1>
+        <div class="subtitle">Тема: «Кабели типа витая пара». Расчёт и выбор кабеля для реального объекта</div>
+    </div>
+
+    <!-- ДАННЫЕ СТУДЕНТА -->
+    <div class="student-info">
+        <div class="field"><span>ФИО:</span> _________________________________________</div>
+        <div class="field" style="max-width: 120px;"><span>Группа:</span> ____________</div>
+        <div class="field" style="max-width: 130px;"><span>Дата:</span> ____________</div>
+    </div>
+
+    <!-- ЗАДАЧА -->
+    <div class="task-block">
+        <div class="task-title">📋 Условие задачи</div>
+        <p>Вы — системный администратор небольшого офиса. К вам обратился руководитель с задачей: оборудовать <span class="highlight">3 новых рабочих места</span> в кабинете №215. Расстояние от серверной до самого дальнего рабочего места по плану (масштаб 1:10) составляет <span class="highlight">22 см</span>.</p>
+        <p>В офисе используется <span class="highlight">гигабитная сеть</span>, но рядом с кабинетом проходит <span class="highlight">силовая линия электропитания</span>.</p>
+        <p><strong>Задание:</strong> 1) выбрать категорию и тип экранирования; 2) рассчитать длину кабеля; 3) нарисовать схему прокладки.</p>
+    </div>
+
+    <!-- ШАГ 1 -->
+    <div class="step">
+        <div class="step-title">Шаг 1. Выбор категории кабеля</div>
+        <div class="step-subtitle">Отметьте ☑ один вариант</div>
+        <div class="options">
+            <label><span class="box"></span> Cat5e</label>
+            <label><span class="box"></span> Cat6</label>
+            <label><span class="box"></span> Cat6a</label>
+            <label><span class="box"></span> Cat7</label>
+        </div>
+        <div class="fill-label">Обоснование выбора категории:</div>
+        <div class="fill-line"></div>
+        <div class="fill-line"></div>
+    </div>
+
+    <!-- ШАГ 2 -->
+    <div class="step">
+        <div class="step-title">Шаг 2. Выбор типа экранирования</div>
+        <div class="step-subtitle">Отметьте ☑ один вариант</div>
+        <div class="options">
+            <label><span class="box"></span> U/UTP</label>
+            <label><span class="box"></span> F/UTP</label>
+            <label><span class="box"></span> SF/UTP</label>
+            <label><span class="box"></span> S/FTP</label>
+        </div>
+        <div class="fill-label">Обоснование выбора экранирования:</div>
+        <div class="fill-line"></div>
+        <div class="fill-line"></div>
+    </div>
+
+    <!-- ШАГ 3 -->
+    <div class="step">
+        <div class="step-title">Шаг 3. Расчёт длины кабеля</div>
+        <div class="step-subtitle">Заполните таблицу, используя формулу с занятия</div>
+        <table class="calc-table">
+            <tr>
+                <th>Реальная длина (м) = 22 см × 0,1</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Длина с запасом 15% = Реальная × 1,15</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Итого для 3 портов = С запасом × 3</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Округлить вверх до целого (м)</th>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ШАГ 4: СХЕМА -->
+    <div class="step">
+        <div class="step-title">Шаг 4. Схема прокладки кабеля</div>
+        <div class="step-subtitle">Нарисуйте путь кабеля от серверной до 3 рабочих мест. Укажите точки и примерную длину трассы.</div>
+        <div class="scheme-area">
+            <span>✏️ Место для схемы (нарисуйте от руки)</span>
+        </div>
+        <div style="font-size:10pt; color:#555; margin-top:6px;">
+            Обозначения: <strong>С</strong> — серверная, <strong>РМ1</strong>, <strong>РМ2</strong>, <strong>РМ3</strong> — рабочие места.
+        </div>
+    </div>
+
+    <!-- ВЫВОД -->
+    <div class="step">
+        <div class="step-title">Шаг 5. Итоговый вывод</div>
+        <div class="fill-label">Сколько метров кабеля необходимо закупить для выполнения задачи?</div>
+        <div class="fill-line short"></div>
+        <div class="fill-label" style="margin-top:10px;">Какой кабель вы порекомендуете и почему? (кратко)</div>
+        <div class="fill-line"></div>
+        <div class="fill-line"></div>
+    </div>
+
+    <!-- ПОДПИСЬ -->
+    <div class="signature">
+        <div class="sig-field">Подпись студента</div>
+        <div class="sig-field">Дата сдачи</div>
+        <div class="sig-field">Оценка преподавателя</div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <div class="footer-note">
+        Работа выполняется на отдельном листе или на этом бланке. Приветствуется аккуратность, обоснование и наличие схемы.<br>
+        Срок сдачи: следующее занятие. Преподаватель: Ушакова Ю.И.
+    </div>
+
+</div>
+
+<!-- ВТОРОЙ ЛИСТ (продолжение, если нужно) -->
+<div class="sheet page-break" style="margin-top:20px;">
+    <div class="header">
+        <h1 style="font-size:14pt;">Дополнительное место для расчётов и схемы</h1>
+        <div class="subtitle">Используйте этот лист, если не хватило места на первом</div>
+    </div>
+    <div class="scheme-area" style="height:400px;">
+        <span>✏️ Дополнительное место для схемы / расчётов</span>
+    </div>
+    <div class="fill-label" style="margin-top:20px;">Заметки и пояснения:</div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+    <div class="fill-line"></div>
+</div>
+
+<script>
+    // Небольшая функция: при нажатии на квадратик — ставим "птичку" визуально
+    // (но при печати всё равно нужно будет заполнять ручкой)
+    document.querySelectorAll('.options label').forEach(label => {
+        label.addEventListener('click', () => {
+            // Снимаем со всех в этой группе
+            const parent = label.parentElement;
+            parent.querySelectorAll('.box').forEach(b => b.textContent = '');
+            parent.querySelectorAll('label').forEach(l => l.style.fontWeight = 'normal');
+            // Ставим на выбранный
+            label.querySelector('.box').textContent = '✓';
+            label.style.fontWeight = 'bold';
+        });
+    });
+</script>
+
+</body>
+</html>

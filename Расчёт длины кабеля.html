@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Расчёт длины кабеля</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            padding: 24px 28px 36px;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            color: #0f3b5f;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 24px 0;
+            font-weight: 500;
+        }
+
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin: 20px 0 30px;
+        }
+
+        .left-panel {
+            flex: 1.2;
+            min-width: 300px;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 280px;
+            background: #f8fafd;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid #dee4ed;
+            height: fit-content;
+        }
+
+        .plan-image {
+            background: #f4f7fc;
+            border-radius: 28px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1px solid #e2edf5;
+        }
+
+        .plan-image img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .calc-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1e4663;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input {
+            padding: 10px 16px;
+            border-radius: 60px;
+            border: 1px solid #cbdde9;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: 0.1s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff8c42;
+        }
+
+        .result-box {
+            background: #eef2f7;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin: 20px 0 16px;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .calc-btn {
+            background: #2c5a7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: 0.1s;
+        }
+
+        .calc-btn:hover {
+            background: #1f4460;
+            transform: scale(0.97);
+        }
+
+        .info-note {
+            background: #fff7e5;
+            border-radius: 20px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            border-left: 4px solid #ff8c42;
+        }
+
+        .formula-block {
+            background: #e9f0f5;
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 20px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-gray {
+            background: #5f6c7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-gray:hover {
+            background: #3e4a5a;
+            transform: scale(0.97);
+        }
+
+        .btn-orange {
+            background: #ff8c42;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-orange:hover {
+            background: #e67e2e;
+            transform: scale(0.97);
+        }
+
+        .global-feedback {
+            margin-top: 28px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7b8c9e;
+            border-top: 1px solid #e2edf5;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .two-columns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📐 Расчёт длины кабеля для рабочего места</h1>
+    <div class="sub">📐 Масштаб плана 1:10 (1 см на схеме = 10 см = 0,1 м в реальности). Введите расстояние в сантиметрах по плану.</div>
+
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="two-columns">
+        <div class="left-panel">
+            <div class="plan-image">
+                <img src="планэтажа.jpg" alt="План этажа" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'500\' height=\'350\' viewBox=\'0 0 500 350\'%3E%3Crect width=\'500\' height=\'350\' fill=\'%23eef2f7\'/%3E%3Ctext x=\'50\' y=\'180\' fill=\'%236b7f8f\' font-size=\'14\'%3EПлан этажа (планэтажа.jpg)%3C/text%3E%3C/svg%3E';">
+                <div style="margin-top: 10px; font-size: 0.8rem; color: #4a627a;">📌 Схема офиса: серверная (коммутатор) → рабочее место. Масштаб 1:10. Измерения на схеме в см.</div>
+            </div>
+            <div class="calc-card">
+                <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 16px;">📊 Введите данные для одного рабочего места</div>
+                
+                <div class="input-group">
+                    <label>📏 Расстояние от серверной до рабочего места (см на схеме)</label>
+                    <input type="number" id="distanceCm" placeholder="например, 15" value="">
+                </div>
+                
+                <div class="input-group">
+                    <label>🔌 Количество портов (компьютеров / розеток)</label>
+                    <input type="number" id="portsCount" placeholder="например, 2" value="">
+                </div>
+
+                <button id="calcBtn" class="calc-btn">🧮 Рассчитать длину кабеля</button>
+                
+                <div class="result-box" id="calcResult">
+                    📌 Результат: — м (с запасом 15%)
+                </div>
+                <div class="result-box" id="calcRecommend">
+                    📌 Рекомендация: округлить до целого
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 12px;">📐 Формула расчёта (масштаб 1:10, см)</div>
+            <div class="formula-block">
+                <strong>1. Реальная длина (м) = Расстояние на схеме (см) × 0,1</strong><br>
+                <em>(так как 1 см на плане = 10 см в натуре = 0,1 метра)</em><br><br>
+                <strong>2. Длина с запасом 15% = Реальная длина × 1,15</strong><br>
+                <strong>3. Итого для РМ = (Длина с запасом) × (количество портов)</strong><br>
+                <strong>4. Общая длина = Итого для РМ (округлить вверх до целого)</strong>
+            </div>
+            
+            <div style="font-weight: 700; font-size: 1.1rem; margin: 20px 0 10px;">📘 Пример расчёта</div>
+            <div style="background: #eef2f5; border-radius: 20px; padding: 14px; font-size: 0.85rem;">
+                <strong>Исходные данные:</strong> расстояние 15 см, 2 порта<br>
+                • 15 см × 0,1 = 1,5 м (реальная длина)<br>
+                • 1,5 м × 1,15 = 1,725 м (с запасом 15%)<br>
+                • 1,725 м × 2 порта = 3,45 м<br>
+                • <strong>≈ 4 м</strong> (округлено вверх)
+            </div>
+            <div class="info-note" style="margin-top: 24px;">
+                🧰 <strong>Совет системного администратора:</strong><br>
+                • Всегда учитывайте запас 15% на подъёмы, спуски и изгибы кабеля.<br>
+                • Округляйте итог вверх до целого — удобно для закупки.<br>
+                • При сложной трассе (много поворотов, высокие потолки) запас можно увеличить до 20%.
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="resetLocalBtn" class="btn-gray">🔄 Сбросить всё (только это задание)</button>
+        <button id="saveAndGoHomeBtn" class="btn-orange">🏠 Сохранить прогресс и на главную</button>
+    </div>
+    <div id="globalFeedback" class="global-feedback">
+        📌 Введите расстояние с плана этажа в сантиметрах (см) и количество портов. Калькулятор учтёт масштаб 1:10 и запас 15%.
+    </div>
+    <footer>🔧 Задача: по плану этажа (планэтажа.jpg, масштаб 1:10) определите расстояние от серверной до рабочего места в сантиметрах и получите итоговую длину кабеля.</footer>
+</div>
+
+<script>
+    // ========== КЛЮЧИ ДЛЯ ХРАНЕНИЯ ==========
+    const PROGRESS_KEY = "cable_length_progress";
+    const STATE_KEY = "cable_length_state";
+
+    // ========== ЭЛЕМЕНТЫ DOM ==========
+    const distanceInput = document.getElementById('distanceCm');
+    const portsInput = document.getElementById('portsCount');
+    const calcBtn = document.getElementById('calcBtn');
+    const resetLocalBtn = document.getElementById('resetLocalBtn');
+    const saveAndGoHomeBtn = document.getElementById('saveAndGoHomeBtn');
+    const calcResultDiv = document.getElementById('calcResult');
+    const calcRecommendDiv = document.getElementById('calcRecommend');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const globalFeedbackDiv = document.getElementById('globalFeedback');
+
+    // ========== ПЕРЕМЕННЫЕ СОСТОЯНИЯ ==========
+    let lastCalculatedLength = 0;
+    let hasCalculated = false;
+
+    // ========== ФУНКЦИИ ПРОГРЕССА ==========
+    function calculateProgress() {
+        if (hasCalculated && lastCalculatedLength > 0) {
+            return 100;
+        }
+        return 0;
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        progressFill.style.width = progress + '%';
+        progressText.innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveFullState() {
+        let progress = calculateProgress();
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        
+        const state = {
+            distanceCm: distanceInput.value,
+            portsCount: portsInput.value,
+            lastCalculatedLength: lastCalculatedLength,
+            hasCalculated: hasCalculated,
+            resultHtml: calcResultDiv.innerHTML,
+            recommendHtml: calcRecommendDiv.innerHTML
+        };
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        
+        console.log(`💾 Сохранён прогресс расчёта длины: ${progress}%`);
+        window.dispatchEvent(new StorageEvent('storage', { key: PROGRESS_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function loadSavedState() {
+        const savedState = localStorage.getItem(STATE_KEY);
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                distanceInput.value = state.distanceCm !== undefined ? state.distanceCm : "";
+                portsInput.value = state.portsCount !== undefined ? state.portsCount : "";
+                lastCalculatedLength = state.lastCalculatedLength || 0;
+                hasCalculated = state.hasCalculated || false;
+                if (state.resultHtml) calcResultDiv.innerHTML = state.resultHtml;
+                if (state.recommendHtml) calcRecommendDiv.innerHTML = state.recommendHtml;
+            } catch(e) {}
+        } else {
+            // При первом заходе поля пустые
+            distanceInput.value = "";
+            portsInput.value = "";
+            hasCalculated = false;
+            lastCalculatedLength = 0;
+            calcResultDiv.innerHTML = '📌 Результат: — м (с запасом 15%)';
+            calcRecommendDiv.innerHTML = '📌 Рекомендация: округлить до целого';
+        }
+        updateProgressUI();
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveFullState();
+        if (progress === 100) {
+            globalFeedbackDiv.innerHTML = "🎉 Отлично! Расчёт выполнен верно. Прогресс сохранён!";
+            globalFeedbackDiv.style.background = "#c8e6d9";
+            globalFeedbackDiv.style.color = "#1e5a3a";
+        } else {
+            globalFeedbackDiv.innerHTML = "📌 Введите корректные значения и нажмите «Рассчитать». Прогресс сохранится после расчёта.";
+            globalFeedbackDiv.style.background = "#eef2f5";
+            globalFeedbackDiv.style.color = "#1f5e8c";
+        }
+    }
+
+    // ========== ФУНКЦИЯ РАСЧЁТА ==========
+    function calculateCable() {
+        let distanceCm = parseFloat(distanceInput.value);
+        let ports = parseInt(portsInput.value);
+        
+        if (isNaN(distanceCm) || distanceCm <= 0) {
+            calcResultDiv.innerHTML = '❌ Ошибка: введите положительное расстояние (см)';
+            calcRecommendDiv.innerHTML = '📌 Рекомендация: используйте числа больше 0';
+            hasCalculated = false;
+            autoSaveAndUpdate();
+            return;
+        }
+        if (isNaN(ports) || ports <= 0) {
+            calcResultDiv.innerHTML = '❌ Ошибка: введите положительное количество портов';
+            calcRecommendDiv.innerHTML = '📌 Рекомендация: количество портов должно быть не менее 1';
+            hasCalculated = false;
+            autoSaveAndUpdate();
+            return;
+        }
+        
+        const scaleToMeters = 0.1;
+        const reserveFactor = 1.15;
+        
+        const realMeters = distanceCm * scaleToMeters;
+        const withReserve = realMeters * reserveFactor;
+        const totalForPorts = withReserve * ports;
+        let finalLength = Math.ceil(totalForPorts);
+        
+        lastCalculatedLength = finalLength;
+        hasCalculated = true;
+        
+        let detailsHtml = `
+            <strong>📏 Пошаговый расчёт:</strong><br>
+            • Расстояние на схеме: ${distanceCm} см<br>
+            • Реальная длина: ${distanceCm} см × 0,1 = ${realMeters.toFixed(2)} м<br>
+            • С запасом 15%: ${realMeters.toFixed(2)} м × 1,15 = ${withReserve.toFixed(2)} м<br>
+            • На ${ports} порт(а): ${withReserve.toFixed(2)} м × ${ports} = ${totalForPorts.toFixed(2)} м<br>
+            <strong>🧾 Итого к закупке (округлено вверх): ${finalLength} метров</strong>
+        `;
+        calcResultDiv.innerHTML = detailsHtml;
+        calcRecommendDiv.innerHTML = `📌 Рекомендация: оптимально закупить отрезок ${finalLength} м. При сложной трассе добавьте ещё 2–3 м.`;
+        
+        autoSaveAndUpdate();
+    }
+
+    // ========== ЛОКАЛЬНЫЙ СБРОС ==========
+    function resetLocal() {
+        if (confirm('Сбросить все данные этого задания? Восстановить будет невозможно.')) {
+            distanceInput.value = "";
+            portsInput.value = "";
+            hasCalculated = false;
+            lastCalculatedLength = 0;
+            calcResultDiv.innerHTML = '📌 Результат: — м (с запасом 15%)';
+            calcRecommendDiv.innerHTML = '📌 Рекомендация: округлить до целого';
+            autoSaveAndUpdate();
+            globalFeedbackDiv.innerHTML = "🔄 Данные сброшены. Вы можете начать заново.";
+            globalFeedbackDiv.style.background = "#eef2f5";
+            globalFeedbackDiv.style.color = "#1f5e8c";
+        }
+    }
+
+    // ========== СОХРАНЕНИЕ И ПЕРЕХОД НА ГЛАВНУЮ ==========
+    function saveAndGoHome() {
+        autoSaveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    // ========== ГЛОБАЛЬНЫЙ СБРОС С ГЛАВНОЙ СТРАНИЦЫ ==========
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            localStorage.removeItem(PROGRESS_KEY);
+            localStorage.removeItem(STATE_KEY);
+            distanceInput.value = "";
+            portsInput.value = "";
+            hasCalculated = false;
+            lastCalculatedLength = 0;
+            calcResultDiv.innerHTML = '📌 Результат: — м (с запасом 15%)';
+            calcRecommendDiv.innerHTML = '📌 Рекомендация: округлить до целого';
+            updateProgressUI();
+            globalFeedbackDiv.innerHTML = "🔄 Глобальный сброс выполнен. Данные очищены.";
+            globalFeedbackDiv.style.background = "#eef2f5";
+            globalFeedbackDiv.style.color = "#1f5e8c";
+        }
+    });
+
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    function init() {
+        loadSavedState();
+        calcBtn.addEventListener('click', calculateCable);
+        resetLocalBtn.addEventListener('click', resetLocal);
+        saveAndGoHomeBtn.addEventListener('click', saveAndGoHome);
+        
+        distanceInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculateCable();
+        });
+        portsInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculateCable();
+        });
+    }
+    
+    init();
+</script>
+</body>
+</html>

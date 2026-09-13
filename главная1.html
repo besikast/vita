@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Главная | Мастер года: Сетевое и системное администрирование</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .viewport {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 12px;
+        }
+
+        .container {
+            width: 1400px;
+            max-width: 1400px;
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            overflow: hidden;
+            padding: 24px 28px 28px;
+            border: 1px solid #f5c518;
+            transform-origin: center center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .topic-header {
+            background: #1a1a1a;
+            border-radius: 28px;
+            padding: 16px 24px;
+            color: #f5c518;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border-left: 8px solid #f5c518;
+            flex-shrink: 0;
+        }
+        .topic-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: #dddddd;
+            font-weight: 500;
+        }
+
+        .theme-setup {
+            background: #fef9e6;
+            border-radius: 24px;
+            padding: 14px 20px;
+            border: 2px solid #f5c518;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 14px;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .theme-input-group { flex: 3; min-width: 200px; }
+        .theme-input-group label {
+            display: block;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+        }
+        .theme-input-group input {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 60px;
+            border: 2px solid #e0e0e0;
+            font-size: 0.9rem;
+            background: white;
+        }
+        .theme-input-group input:focus { outline: none; border-color: #f5c518; }
+        .theme-setup button {
+            background: #1a1a1a;
+            border: none;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 10px 22px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: 1px solid #f5c518;
+            white-space: nowrap;
+        }
+        .theme-setup button:hover { background: #f5c518; color: #1a1a1a; transform: scale(0.97); }
+
+        .fixed-theme {
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 10px 18px;
+            display: inline-block;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-left: 6px solid #f5c518;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .goal-block {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 12px 20px;
+            color: #f5c518;
+            border-left: 8px solid #f5c518;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .goal-block.show { display: flex; }
+        .goal-block .goal-icon { font-size: 1.1rem; }
+        .goal-block .goal-text { color: #f5c518; line-height: 1.35; }
+        .goal-block .goal-text strong { color: #ffffff; font-weight: 700; }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .task-card:hover { transform: translateY(-4px); border-color: #f5c518; }
+
+        .card-header {
+            background: #fef9e6;
+            padding: 12px 16px;
+            border-bottom: 2px solid #f5c518;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-header .emoji { font-size: 1.3rem; }
+        .card-header h3 {
+            font-size: 1rem;
+            color: #1a1a1a;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .card-body {
+            padding: 14px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .progress-section { margin-bottom: 10px; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 4px;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #f5c518;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .score-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-top: 6px;
+            text-align: right;
+        }
+        .open-btn {
+            background: #1a1a1a;
+            border: none;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 8px 0;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: auto;
+            border: 1px solid #f5c518;
+            transition: 0.15s;
+        }
+        .open-btn:hover { background: #f5c518; color: #1a1a1a; transform: scale(0.98); }
+
+        .final-result {
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 16px 22px;
+            border-left: 8px solid #f5c518;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .final-text { flex: 1; min-width: 220px; }
+        .final-text h3 {
+            font-size: 1.1rem;
+            color: #f5c518;
+            margin-bottom: 4px;
+        }
+        .final-text p {
+            color: #dddddd;
+            font-weight: 500;
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+
+        .download-btn {
+            background: #f5c518;
+            border: 2px solid #1a1a1a;
+            color: #1a1a1a;
+            font-weight: bold;
+            padding: 10px 18px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: 0.15s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .download-btn:hover {
+            background: #ffffff;
+            transform: scale(1.03);
+        }
+
+        .final-grade {
+            background: #2a2a2a;
+            border-radius: 60px;
+            padding: 8px 22px;
+            text-align: center;
+            border: 1px solid #f5c518;
+            flex-shrink: 0;
+        }
+        .grade-value { font-size: 1.8rem; font-weight: 800; color: #f5c518; line-height: 1; }
+        .grade-label { font-size: 0.65rem; color: #ccc; margin-top: 3px; }
+
+        .reset-all {
+            background: #2a2a2a;
+            border: 1px solid #f5c518;
+            color: #f5c518;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            transition: 0.15s;
+        }
+        .reset-all:hover { background: #f5c518; color: #1a1a1a; }
+
+        .homework-block {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 24px;
+            padding: 16px 22px;
+            border-left: 8px solid #f5c518;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .homework-block .hw-text {
+            flex: 1;
+            min-width: 250px;
+        }
+        .homework-block .hw-text h3 {
+            font-size: 1.1rem;
+            color: #f5c518;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .homework-block .hw-text p {
+            color: #cccccc;
+            font-weight: 500;
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+        .homework-badge {
+            background: #f5c518;
+            color: #1a1a1a;
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .homework-block .hw-btn {
+            background: #f5c518;
+            border: none;
+            color: #1a1a1a;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.15s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .homework-block .hw-btn:hover {
+            background: #ffffff;
+            transform: scale(1.03);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c6c6c;
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        @media print {
+            html, body { overflow: visible; height: auto; background: white; }
+            .viewport { width: auto; height: auto; display: block; overflow: visible; padding: 0; }
+            .container {
+                transform: none !important;
+                width: 100%;
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                border: none;
+            }
+        }
+
+        @media (max-width: 1450px) {
+            .tasks-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 1100px) {
+            .tasks-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="viewport" id="viewport">
+    <div class="container" id="container">
+
+        <div class="topic-header">
+            <p>Специальность: 09.02.06 «Сетевое и системное администрирование» | 2 курс | Преподаватель: Ушакова Ю.И.</p>
+        </div>
+
+        <div class="theme-setup" id="themeSetupBlock">
+            <div class="theme-input-group">
+                <label>✏️ Введите тему занятия (своими словами):</label>
+                <input type="text" id="themeInput" value="">
+            </div>
+            <button id="fixThemeBtn">📌 Зафиксировать тему</button>
+        </div>
+        <div id="fixedThemeDisplay" class="fixed-theme" style="display: none;"></div>
+
+        <div class="goal-block" id="goalBlock">
+            <span class="goal-icon">🎯</span>
+            <div class="goal-text">
+                <strong>Цель занятия:</strong> Изучение конструктивных особенностей кабелей «витая пара» и технологии изготовления патч-корда
+            </div>
+        </div>
+
+        <div class="tasks-grid" id="tasksGrid"></div>
+
+        <div class="final-result" id="finalResult">
+            <div class="final-text">
+                <h3>📊 Итоговая оценка за занятие</h3>
+                <p>После выполнения всех интерактивных заданий здесь появится ваш результат и рекомендации.</p>
+            </div>
+            <button id="downloadPdfBtn" class="download-btn">📄 Скачать конспект</button>
+            <div class="final-grade">
+                <div class="grade-value" id="gradeValue">— / 100</div>
+                <div class="grade-label">общий прогресс</div>
+            </div>
+            <button id="resetGlobalBtn" class="reset-all">🔄 Сбросить прогресс</button>
+        </div>
+
+        <div class="homework-block">
+            <div class="hw-text">
+                <h3>🏠 Домашнее задание <span class="homework-badge">вне зачёта</span></h3>
+                <p>Закрепите материал: выберите кабель для реального офиса, рассчитайте длину и нарисуйте схему. Бланк можно распечатать и заполнить от руки.</p>
+            </div>
+            <button class="hw-btn" onclick="window.location.href='Домашнее задание.html'">
+                📄 Открыть бланк →
+            </button>
+        </div>
+
+        <footer>💡 Каждое задание сохраняет прогресс автоматически. Домашнее задание не влияет на итоговую оценку занятия.</footer>
+    </div>
+</div>
+
+<script>
+    const modules = [
+        { title: "🏛️ Модель OSI", file: "Модель OSI.html", storageKey: "osi_pyramid_progress" },
+        { title: "⚠️ Диагностика сети", file: "Диагностика сети.html", storageKey: "network_diagnostic_progress" },
+        { title: "📀 Кабели типа витая пара", file: "Кабели типа витая пара.html", storageKey: "cable_categories_progress" },
+        { title: "🛡️ Типы экранирования витой пары", file: "Типы экранирования витой пары.html", storageKey: "shielding_types_progress" },
+        { title: "📐 Расчёт длины кабеля", file: "Расчёт длины кабеля.html", storageKey: "cable_length_progress" },
+        { title: "🔌 Типы обжима", file: "Типы обжима.html", storageKey: "crimping_types_progress" },
+        { title: "🔧 Изготовление патч-корда", file: "Изготовление патч-корда.html", storageKey: "patchcord_checklist" },
+        { title: "🏆 Итоги", file: "Итоги.html", storageKey: "final_results" }
+    ];
+
+    const ADDITIONAL_KEYS = [
+        "cable_categories_selections",
+        "shielding_types_selections",
+        "crimping_selections",
+        "fixed_lesson_theme",
+        "osi_pyramid_progress_pyramid",
+        "osi_pyramid_progress_tech",
+        "osi_pyramid_progress_state",
+        "cable_length_state",
+        "patchcord_checklist_states",
+        "final_reflection_state"
+    ];
+
+    function getProgress(key) {
+        let saved = localStorage.getItem(key);
+        if (!saved) return 0;
+        try {
+            let val = JSON.parse(saved);
+            if (typeof val === 'number') return Math.min(100, Math.max(0, val));
+            if (val && typeof val.progress === 'number') return Math.min(100, Math.max(0, val.progress));
+            return 0;
+        } catch(e) {
+            let num = Number(saved);
+            return isNaN(num) ? 0 : Math.min(100, Math.max(0, num));
+        }
+    }
+
+    function renderTasks() {
+        const grid = document.getElementById('tasksGrid');
+        grid.innerHTML = '';
+        modules.forEach(mod => {
+            let progress = getProgress(mod.storageKey);
+            let card = document.createElement('div');
+            card.className = 'task-card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="emoji">${mod.title.charAt(0)}</span>
+                    <h3>${mod.title.substring(2)}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="progress-section">
+                        <div class="progress-label"><span>Выполнение</span><span>${progress}%</span></div>
+                        <div class="progress-bar-bg"><div class="progress-fill" style="width: ${progress}%;"></div></div>
+                    </div>
+                    <div class="score-text">${progress >= 100 ? '✅ Завершено' : (progress > 0 ? '⚠️ Частично' : '🔘 Не начато')}</div>
+                    <button class="open-btn" data-file="${mod.file}">🚀 Открыть</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        document.querySelectorAll('.open-btn').forEach(btn => {
+            btn.addEventListener('click', () => window.location.href = btn.getAttribute('data-file'));
+        });
+        updateFinalResult();
+    }
+
+    function updateFinalResult() {
+        let total = 0, completed = 0;
+        modules.forEach(mod => {
+            let p = getProgress(mod.storageKey);
+            total += p;
+            if (p >= 100) completed++;
+        });
+        let avg = modules.length ? Math.round(total / modules.length) : 0;
+        document.getElementById('gradeValue').innerHTML = `${avg} / 100`;
+        let msg = '', rec = '';
+        if (avg >= 90) { msg = '🎉 Блестящий результат! Вы отлично освоили тему.'; rec = 'Можете углублённо изучать стандарты Cat7/Cat8.'; }
+        else if (avg >= 70) { msg = '👍 Хороший результат! Есть небольшие пробелы.'; rec = 'Повторите типы экранирования и расчёт длины.'; }
+        else if (avg >= 50) { msg = '📘 Удовлетворительно. Практические навыки требуют доработки.'; rec = 'Пройдите заново диагностику и обжим.'; }
+        else if (avg > 0) { msg = '⚠️ Начальный уровень. Нужно больше практики.'; rec = 'Изучите справочную информацию на каждой странице.'; }
+        else { msg = '📌 Вы ещё не приступили к заданиям.'; rec = 'Начните с пирамиды OSI.'; }
+        document.querySelector('.final-text p').innerHTML = `<strong>${msg}</strong><br><span style="font-size:0.8rem;">${rec}</span>`;
+        let oldBadge = document.querySelector('.perfect-badge');
+        if (oldBadge) oldBadge.remove();
+        if (completed === modules.length && avg === 100) {
+            let badge = document.createElement('div');
+            badge.className = 'perfect-badge';
+            badge.style.marginTop = '8px';
+            badge.style.background = '#f5c518';
+            badge.style.color = '#1a1a1a';
+            badge.style.padding = '5px 12px';
+            badge.style.borderRadius = '40px';
+            badge.style.display = 'inline-block';
+            badge.style.fontWeight = 'bold';
+            badge.style.fontSize = '0.85rem';
+            badge.innerText = '🏆 МАСТЕР ГОДА! Все модули выполнены идеально!';
+            document.querySelector('.final-text').appendChild(badge);
+        }
+    }
+
+    const THEME_KEY = "fixed_lesson_theme";
+    function saveTheme(t) { if (t && t.trim()) localStorage.setItem(THEME_KEY, t.trim()); else localStorage.removeItem(THEME_KEY); }
+    function loadTheme() { return localStorage.getItem(THEME_KEY); }
+
+    function updateThemeUI() {
+        let saved = loadTheme();
+        let setup = document.getElementById('themeSetupBlock');
+        let display = document.getElementById('fixedThemeDisplay');
+        let goalBlock = document.getElementById('goalBlock');
+        if (saved) {
+            setup.style.display = 'none';
+            display.style.display = 'block';
+            display.innerHTML = `📌 Тема занятия: <strong>${saved}</strong>`;
+            goalBlock.classList.add('show');
+        } else {
+            setup.style.display = 'flex';
+            display.style.display = 'none';
+            goalBlock.classList.remove('show');
+            document.getElementById('themeInput').value = '';
+        }
+    }
+    document.getElementById('fixThemeBtn').addEventListener('click', () => {
+        let val = document.getElementById('themeInput').value.trim();
+        if (!val) { alert("Введите тему занятия."); return; }
+        saveTheme(val);
+        updateThemeUI();
+    });
+
+    // ========== ВСПОМОГАТЕЛЬНЫЕ ==========
+    function valueOrLine(val, suffix) {
+        suffix = suffix || '';
+        if (val !== undefined && val !== null && val !== '' && val !== '—') {
+            return `<span class="filled">${val}${suffix}</span>`;
+        }
+        return `<span class="empty-line"></span>`;
+    }
+
+    function imgTag(src, alt, style) {
+        const fallback = `this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%2780%27%3E%3Crect width=%27200%27 height=%2780%27 fill=%27%23f5f5f5%27 stroke=%27%23999%27 stroke-dasharray=%275,5%27/%3E%3Ctext x=%27100%27 y=%2745%27 text-anchor=%27middle%27 fill=%27%23666%27 font-size=%2712%27 font-family=%27Arial%27%3E${alt}%3C/text%3E%3C/svg%3E';`;
+        return `<img src="${src}" alt="${alt}" style="${style || 'max-width:100%; max-height:120px; border-radius:8px; border:1px solid #ccc;'}" onerror="${fallback}">`;
+    }
+
+    // ========== ГЕНЕРАЦИЯ HTML-КОНСПЕКТА ==========
+    function generateHTML() {
+        const theme = loadTheme() || '________________________________________';
+        const goal = 'Изучение конструктивных особенностей кабелей «витая пара» и технологии изготовления патч-корда';
+        const date = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+
+        // OSI
+        let osiPyramid = {};
+        let osiTech = { 1: [], 2: [], 3: [] };
+        try {
+            osiPyramid = JSON.parse(localStorage.getItem('osi_pyramid_progress_pyramid') || '{}');
+            osiTech = JSON.parse(localStorage.getItem('osi_pyramid_progress_tech') || '{"1":[],"2":[],"3":[]}');
+        } catch(e) {}
+
+        const osiLevelNames = { 1: 'Физический', 2: 'Канальный', 3: 'Сетевой', 4: 'Транспортный', 5: 'Сеансовый', 6: 'Уровень представления', 7: 'Прикладной' };
+        let osiRows = '';
+        for (let lvl = 7; lvl >= 1; lvl--) {
+            const assigned = osiPyramid[lvl];
+            const correct = osiLevelNames[lvl];
+            let cell;
+            if (assigned) {
+                const ok = (assigned === correct);
+                cell = `<span class="${ok ? 'filled' : 'filled wrong'}">${assigned}</span>`;
+            } else {
+                cell = `<span class="empty-line"></span>`;
+            }
+            osiRows += `<tr><td class="lvl-num">${lvl}</td><td>${cell}</td></tr>`;
+        }
+
+        const techNames = { hub: 'Хаб', utp: 'Витая пара', rj45: 'Коннектор RJ-45', switch: 'Коммутатор', mac: 'MAC-адрес', router: 'Маршрутизатор', ip: 'IP-адрес' };
+        let techRows = '';
+        for (let lvl of [1, 2, 3]) {
+            const assigned = (osiTech[lvl] || []).map(id => techNames[id] || id);
+            const text = assigned.length > 0 ? assigned.join(', ') : '';
+            techRows += `<tr><td class="lvl-num">${lvl}</td><td>${valueOrLine(text)}</td></tr>`;
+        }
+
+        // Диагностика
+        let diagAnswer = '', diagResult = '';
+        try {
+            const diag = JSON.parse(localStorage.getItem('network_diagnostic_progress') || '{}');
+            if (diag.selectedAnswer) {
+                const answers = {
+                    broken_cable: 'Полный обрыв кабеля',
+                    switch_fault: 'Неисправен порт коммутатора',
+                    wrong_cross: 'Неправильный обжим (перепутана распиновка)',
+                    server_down: 'Не работает сетевая карта сервера'
+                };
+                diagAnswer = answers[diag.selectedAnswer] || diag.selectedAnswer;
+                diagResult = diag.isCorrect ? 'Верно' : 'Неверно';
+            }
+        } catch(e) {}
+
+        // Кабели
+        let cableCategoriesHtml = '';
+        const cableImgs = { cat5e: 'cat5e.jpg', cat6: 'cat6.jpg', cat6a: 'cat6a.jpg', cat7: 'cat7.jpg', cat7a: 'cat7a.jpg', cat8: 'cat8.jpg' };
+        const cableLabels = { cat5e: 'Cat5e', cat6: 'Cat6', cat6a: 'Cat6a', cat7: 'Cat7', cat7a: 'Cat7a', cat8: 'Cat8' };
+        try {
+            const sel = JSON.parse(localStorage.getItem('cable_categories_selections') || '{}');
+            for (let id in cableLabels) {
+                const s = sel[id] || {};
+                cableCategoriesHtml += `
+                    <tr>
+                        <td style="text-align:center;">${imgTag(cableImgs[id], cableLabels[id], 'max-width:100px; max-height:50px;')}</td>
+                        <td><b>${cableLabels[id]}</b></td>
+                        <td>${valueOrLine(s.frequency || '')}</td>
+                        <td>${valueOrLine(s.speed || '')}</td>
+                        <td>${valueOrLine(s.usage || '')}</td>
+                    </tr>
+                `;
+            }
+        } catch(e) {}
+
+        // Экранирование
+        let shieldHtml = '';
+        const shieldImgs = { U_UTP: 'U_UTP.jpg', S_UTP: 'S_UTP.jpg', F_UTP: 'F_UTP.jpg', SF_UTP: 'SF_UTP.jpg', U_FTP: 'U_FTP.jpg', S_FTP: 'S_FTP.jpg', F_FTP: 'F_FTP.jpg', SF_FTP: 'SF_FTP.jpg' };
+        try {
+            const sel = JSON.parse(localStorage.getItem('shielding_types_selections') || '{}');
+            const shieldData = [
+                { id: 'U_UTP', correct: 'U/UTP' }, { id: 'S_UTP', correct: 'S/UTP' },
+                { id: 'F_UTP', correct: 'F/UTP' }, { id: 'SF_UTP', correct: 'SF/UTP' },
+                { id: 'U_FTP', correct: 'U/FTP' }, { id: 'S_FTP', correct: 'S/FTP' },
+                { id: 'F_FTP', correct: 'F/FTP' }, { id: 'SF_FTP', correct: 'SF/FTP' }
+            ];
+            let rows = '';
+            shieldData.forEach(item => {
+                const userVal = sel[item.id] || '';
+                rows += `<tr>
+                    <td style="text-align:center;">${imgTag(shieldImgs[item.id], item.id, 'max-width:100px; max-height:50px;')}</td>
+                    <td>${item.id.replace('_', '/')}</td>
+                    <td>${valueOrLine(userVal)}</td>
+                </tr>`;
+            });
+            shieldHtml = `
+                <table class="data-table">
+                    <thead><tr><th>Фото</th><th>ID</th><th>Определённый тип</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        } catch(e) {}
+
+        // Расчёт длины
+        let lengthState = {};
+        try { lengthState = JSON.parse(localStorage.getItem('cable_length_state') || '{}'); } catch(e) {}
+
+        // Обжим
+        let crimpState = {};
+        try { crimpState = JSON.parse(localStorage.getItem('crimping_selections') || '{}'); } catch(e) {}
+
+        // Патч-корд
+        let patchState = [];
+        try { patchState = JSON.parse(localStorage.getItem('patchcord_checklist_states') || '[]'); } catch(e) {}
+        const patchSteps = ['Зачистка', 'Расплетение и выравнивание', 'Обрезка', 'Вставка в коннектор', 'Обжим', 'Проверка'];
+        const patchImgs = ['этап1.jpg', 'этап2.jpg', 'этап3.jpg', 'этап4.jpg', 'этап5.jpg', 'этап6.jpg'];
+        let patchHtml = '';
+        patchSteps.forEach((step, i) => {
+            const done = patchState[i] === true;
+            patchHtml += `<tr>
+                <td>${i+1}. ${step}</td>
+                <td style="text-align:center;">${imgTag(patchImgs[i], 'Этап ' + (i+1), 'max-width:90px; max-height:40px;')}</td>
+                <td class="check-cell">${done ? '☑' : '☐'}</td>
+            </tr>`;
+        });
+
+        // Рефлексия
+        let refl = {};
+        try { refl = JSON.parse(localStorage.getItem('final_reflection_state') || '{}'); } catch(e) {}
+        const uMap = { pink: 'Розовый', orange: 'Оранжевый', green: 'Зелёный', blue: 'Синий' };
+        const lMap = { green: 'Зелёный', orange: 'Оранжевый' };
+
+        // Прогресс
+        let totalProgress = 0;
+        let rowsHtml = '';
+        modules.forEach(mod => {
+            const p = getProgress(mod.storageKey);
+            totalProgress += p;
+            const icon = p >= 100 ? '✅' : (p > 0 ? '⚠️' : '🔘');
+            rowsHtml += `<tr><td>${mod.title}</td><td style="text-align:center;font-weight:bold;">${p}%</td><td style="text-align:center;">${icon}</td></tr>`;
+        });
+        const avg = Math.round(totalProgress / modules.length);
+
+        const crimpImgA = crimpState.straightA ? crimpState.straightA : {};
+        const crimpImgB = crimpState.straightB ? crimpState.straightB : {};
+        const crimpImgC = crimpState.crossover ? crimpState.crossover : {};
+
+        const htmlContent = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Опорный конспект — ${theme}</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Times New Roman', 'Segoe UI', serif;
+        background: #eef2f7;
+        padding: 24px 20px;
+        color: #1a1a1a;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    .sheet {
+        max-width: 210mm;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+        padding: 18mm 14mm;
+        border: 2px solid #f5c518;
+    }
+    .header {
+        text-align: center;
+        border-bottom: 3px solid #1a1a1a;
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+    }
+    .header h1 {
+        font-size: 19px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .header .meta { font-size: 11px; color: #666; font-style: italic; }
+    .theme-block {
+        background: #1a1a1a;
+        color: #f5c518;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 5px solid #f5c518;
+    }
+    .theme-block .label { font-size: 9px; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .theme-block .value { font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .goal-block {
+        background: #fef9e6;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        border-left: 5px solid #f5c518;
+    }
+    .goal-block .label { font-size: 9px; color: #8a6d1e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .goal-block .value { font-size: 12px; font-weight: 600; line-height: 1.4; }
+    h2 {
+        font-size: 14px;
+        margin: 20px 0 8px 0;
+        padding: 5px 10px;
+        background: #f0f0f0;
+        border-left: 5px solid #1a1a1a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    h3 {
+        font-size: 12px;
+        margin: 12px 0 5px 0;
+        color: #333;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 2px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 12px 0;
+        font-size: 11px;
+    }
+    table th, table td {
+        border: 1px solid #999;
+        padding: 5px 7px;
+        vertical-align: middle;
+    }
+    table th {
+        background: #1a1a1a;
+        color: #f5c518;
+        font-weight: bold;
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+    table .lvl-num { width: 30px; text-align: center; font-weight: bold; background: #f5f5f5; }
+    table .check-cell { text-align: center; width: 40px; font-size: 15px; }
+    .filled { color: #1a1a1a; font-weight: bold; }
+    .filled.wrong { color: #b13e3e; text-decoration: line-through; }
+    .empty-line {
+        display: inline-block;
+        min-width: 140px;
+        border-bottom: 1px dashed #666;
+        height: 14px;
+    }
+    .info-list { font-size: 11px; line-height: 1.6; margin: 6px 0 12px 0; }
+    .info-list li { margin-left: 18px; margin-bottom: 2px; }
+    .fill-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 5px;
+        font-size: 11px;
+        flex-wrap: wrap;
+    }
+    .fill-row .label-text { white-space: nowrap; }
+    .final-grade {
+        background: #1a1a1a;
+        color: #f5c518;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .final-grade .label { font-size: 12px; font-weight: 600; }
+    .final-grade .value { font-size: 20px; font-weight: 800; }
+    .footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #ccc;
+        text-align: center;
+        font-size: 9px;
+        color: #888;
+        font-style: italic;
+    }
+    .print-btn {
+        display: block;
+        margin: 20px auto 0;
+        background: #1a1a1a;
+        color: #f5c518;
+        border: 2px solid #f5c518;
+        padding: 10px 28px;
+        border-radius: 60px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    .print-btn:hover { background: #f5c518; color: #1a1a1a; }
+    .legend {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin: 8px 0 14px 0;
+        font-size: 10px;
+        color: #666;
+    }
+    .legend b { color: #1a1a1a; }
+    .img-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 6px 0 10px 0;
+    }
+    .img-row img {
+        max-height: 100px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        padding: 3px;
+        background: #fafafa;
+    }
+    .img-caption {
+        font-size: 10px;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        margin-top: 2px;
+    }
+    @media print {
+        body { background: white; padding: 0; font-size: 11px; }
+        .sheet {
+            box-shadow: none;
+            border-radius: 0;
+            border: none;
+            padding: 8mm 10mm;
+            max-width: 100%;
+        }
+        .print-btn { display: none; }
+        h2 { page-break-after: avoid; }
+        table { page-break-inside: auto; }
+        tr { page-break-inside: avoid; }
+    }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+    <div class="header">
+        <h1>Опорный конспект занятия</h1>
+        <div class="meta">Дата: ${date} | Преподаватель: Ушакова Ю.И. | Специальность 09.02.06</div>
+    </div>
+
+    <div class="theme-block">
+        <div class="label">Тема занятия</div>
+        <div class="value">${theme}</div>
+    </div>
+
+    <div class="goal-block">
+        <div class="label">🎯 Цель занятия</div>
+        <div class="value">${goal}</div>
+    </div>
+
+    <div class="legend">
+        <b>Обозначения:</b> <span class="filled">жирный</span> — заполнено учеником; <span class="empty-line" style="min-width:80px;"></span> — поле для рукописной записи.
+    </div>
+
+    <!-- 1. OSI -->
+    <h2>1. 🏛️ Модель OSI</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Модель взаимодействия открытых систем — 7 уровней. Уровни 4–7 — справочные, уровни 1–3 нужно было заполнить.</p>
+
+    <h3>Уровни (от 7 к 1):</h3>
+    <table>
+        <thead><tr><th>№</th><th>Название уровня</th></tr></thead>
+        <tbody>${osiRows}</tbody>
+    </table>
+
+    <h3>Оборудование по уровням 1–3:</h3>
+    <table>
+        <thead><tr><th>№</th><th>Оборудование / технологии</th></tr></thead>
+        <tbody>${techRows}</tbody>
+    </table>
+
+    <!-- 2. Диагностика -->
+    <h2>2. ⚠️ Диагностика сети</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Задача:</b> определить причину сбоя по индикаторам и показаниям тестера.</p>
+
+    <div class="img-row">
+        ${imgTag('сетеваякарта.jpg', 'Сетевая карта')}
+        ${imgTag('коммутатор.jpg', 'Коммутатор')}
+        ${imgTag('тестер.jpg', 'Кабельный тестер')}
+    </div>
+    <div class="img-caption">Кадры из видео-диагностики: сетевая карта, коммутатор, кабельный тестер</div>
+
+    <div class="fill-row">
+        <span class="label-text">Установленная причина:</span>
+        ${valueOrLine(diagAnswer)}
+    </div>
+    <div class="fill-row">
+        <span class="label-text">Результат проверки:</span>
+        ${valueOrLine(diagResult)}
+    </div>
+    <div class="fill-row"><span class="label-text">Признак ошибки в распиновке (своими словами):</span></div>
+    <div class="fill-row"><span class="empty-line" style="min-width:100%;"></span></div>
+
+    <!-- 3. Кабели -->
+    <h2>3. 📀 Кабели типа «витая пара»</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Категория определяет максимальную частоту, скорость и область применения. Гигабит (1000BASE-T) использует все 4 пары.</p>
+
+    <table>
+        <thead>
+            <tr><th>Фото</th><th>Категория</th><th>Частота</th><th>Скорость</th><th>Применение</th></tr>
+        </thead>
+        <tbody>${cableCategoriesHtml}</tbody>
+    </table>
+
+    <!-- 4. Экранирование -->
+    <h2>4. 🛡️ Типы экранирования витой пары</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Формула чтения:</b> символы до «/» — общий экран, после «/» — экранирование пар.</p>
+
+    ${shieldHtml}
+
+    <h3>Расшифровка обозначений:</h3>
+    <ul class="info-list">
+        <li><b>U/UTP</b> — без общего экрана, пары не экранированы.</li>
+        <li><b>F/UTP</b> — общий экран (фольга), пары не экранированы.</li>
+        <li><b>S/FTP</b> — общий экран (оплётка) + каждая пара в фольге.</li>
+        <li><b>SF/FTP</b> — общий экран (фольга + оплётка) + каждая пара в фольге.</li>
+    </ul>
+
+    <!-- 5. Расчёт длины -->
+    <h2>5. 📐 Расчёт длины кабеля</h2>
+    <p style="font-size:11px; margin-bottom:6px;"><b>Масштаб 1:10</b> — 1 см на схеме = 0,1 м в реальности.</p>
+
+    <div class="img-row">
+        ${imgTag('планэтажа.jpg', 'План этажа', 'max-height:150px;')}
+    </div>
+    <div class="img-caption">План этажа (масштаб 1:10)</div>
+
+    <div style="background:#fef9e6; padding:8px 12px; border-left:4px solid #f5c518; border-radius:6px; font-size:11px; margin-bottom:8px;">
+        <b>Формулы:</b><br>
+        <b>1.</b> Реальная длина (м) = Расстояние (см) × 0,1<br>
+        <b>2.</b> С запасом 15% = Реальная × 1,15<br>
+        <b>3.</b> Итого = С запасом × количество портов<br>
+        <b>4.</b> Округлить вверх до целого
+    </div>
+
+    <div class="fill-row"><span class="label-text">Расстояние на схеме:</span>${valueOrLine(lengthState.distanceCm, ' см')}</div>
+    <div class="fill-row"><span class="label-text">Количество портов:</span>${valueOrLine(lengthState.portsCount, ' шт')}</div>
+    <div class="fill-row"><span class="label-text">Реальная длина:</span>${valueOrLine(lengthState.hasCalculated && lengthState.distanceCm ? (parseFloat(lengthState.distanceCm) * 0.1).toFixed(2) : '', ' м')}</div>
+    <div class="fill-row"><span class="label-text">С запасом 15%:</span>${valueOrLine(lengthState.hasCalculated && lengthState.distanceCm ? (parseFloat(lengthState.distanceCm) * 0.1 * 1.15).toFixed(2) : '', ' м')}</div>
+    <div class="fill-row"><span class="label-text">Итоговая длина:</span>${valueOrLine(lengthState.lastCalculatedLength, ' м')}</div>
+
+    <!-- 6. Обжим -->
+    <h2>6. 🔌 Типы обжима патч-корда</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Прямой кабель (T568A или T568B) — компьютер ↔ коммутатор. Кроссовый (T568A + T568B) — компьютер ↔ компьютер.</p>
+
+    <h3>Схема 1 (прямой T568A):</h3>
+    <div class="img-row">
+        ${imgTag('T568A.jpg', 'T568A', 'max-height:70px;')}
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span>${valueOrLine(crimpImgA.selectedType || '')}</div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span>${valueOrLine(crimpImgA.selectedStd || '')}</div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span>${valueOrLine(crimpImgA.leftDevice === 'computer' ? 'Компьютер' : (crimpImgA.leftDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span>${valueOrLine(crimpImgA.rightDevice === 'computer' ? 'Компьютер' : (crimpImgA.rightDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+
+    <h3>Схема 2 (прямой T568B):</h3>
+    <div class="img-row">
+        ${imgTag('T568B.jpg', 'T568B', 'max-height:70px;')}
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span>${valueOrLine(crimpImgB.selectedType || '')}</div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span>${valueOrLine(crimpImgB.selectedStd || '')}</div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span>${valueOrLine(crimpImgB.leftDevice === 'computer' ? 'Компьютер' : (crimpImgB.leftDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span>${valueOrLine(crimpImgB.rightDevice === 'computer' ? 'Компьютер' : (crimpImgB.rightDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+
+    <h3>Схема 3 (кроссовый):</h3>
+    <div class="img-row">
+        ${imgTag('T568A_B.jpg', 'T568A→B', 'max-height:70px;')}
+    </div>
+    <div class="fill-row"><span class="label-text">Тип:</span>${valueOrLine(crimpImgC.selectedType || '')}</div>
+    <div class="fill-row"><span class="label-text">Стандарт:</span>${valueOrLine(crimpImgC.selectedStd || '')}</div>
+    <div class="fill-row"><span class="label-text">Левый конец:</span>${valueOrLine(crimpImgC.leftDevice === 'computer' ? 'Компьютер' : (crimpImgC.leftDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+    <div class="fill-row"><span class="label-text">Правый конец:</span>${valueOrLine(crimpImgC.rightDevice === 'computer' ? 'Компьютер' : (crimpImgC.rightDevice === 'switch' ? 'Коммутатор' : ''))}</div>
+
+    <!-- 7. Патч-корд -->
+    <h2>7. 🔧 Изготовление патч-корда (T568B)</h2>
+    <p style="font-size:11px; margin-bottom:6px;">Порядок цветов T568B: бело-оранжевый, оранжевый, бело-зелёный, синий, бело-синий, зелёный, бело-коричневый, коричневый.</p>
+
+    <table>
+        <thead><tr><th>Этап</th><th>Иллюстрация</th><th>Выполнено</th></tr></thead>
+        <tbody>${patchHtml}</tbody>
+    </table>
+
+    <!-- 8. Рефлексия -->
+    <h2>8. 🏆 Рефлексия</h2>
+    <div class="fill-row"><span class="label-text">Уровень понимания (розовый / оранжевый / зелёный / синий):</span>${valueOrLine(refl.understanding ? (uMap[refl.understanding] || refl.understanding) : '')}</div>
+    <div class="fill-row"><span class="label-text">Цвет линка на коммутаторе (зелёный / оранжевый):</span>${valueOrLine(refl.linkColor ? (lMap[refl.linkColor] || refl.linkColor) : '')}</div>
+
+    <!-- Итог -->
+    <h2>📊 Результаты по модулям</h2>
+    <table>
+        <thead><tr><th>Модуль</th><th style="text-align:center;">Прогресс</th><th style="text-align:center;">Статус</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <div class="final-grade">
+        <div class="label">Итоговая оценка за занятие:</div>
+        <div class="value">${avg} / 100</div>
+    </div>
+
+    <div class="footer">
+        Конспект сгенерирован автоматически. Пустые строки заполните от руки.
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Распечатать конспект</button>
+</div>
+</body>
+</html>`;
+
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Конспект_${date.replace(/\s/g, '_')}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('downloadPdfBtn').addEventListener('click', generateHTML);
+
+    document.getElementById('resetGlobalBtn').addEventListener('click', () => {
+        if (confirm('Сбросить весь прогресс занятия и тему? Домашнее задание не будет затронуто. Это действие нельзя отменить.')) {
+            modules.forEach(m => localStorage.removeItem(m.storageKey));
+            ADDITIONAL_KEYS.forEach(key => localStorage.removeItem(key));
+            localStorage.removeItem(THEME_KEY);
+            localStorage.setItem('GLOBAL_RESET_TRIGGER', Date.now().toString());
+            setTimeout(() => {
+                localStorage.removeItem('GLOBAL_RESET_TRIGGER');
+            }, 100);
+            updateThemeUI();
+            renderTasks();
+            alert('Прогресс занятия сброшен. Домашнее задание сохранено.');
+        }
+    });
+
+    function fitContainer() {
+        const viewport = document.getElementById('viewport');
+        const container = document.getElementById('container');
+        if (!viewport || !container) return;
+        container.style.transform = 'scale(1)';
+        const contWidth = container.offsetWidth;
+        const contHeight = container.offsetHeight;
+        const availWidth = viewport.clientWidth;
+        const availHeight = viewport.clientHeight;
+        const scale = Math.min(availWidth / contWidth, availHeight / contHeight, 1);
+        container.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('pageshow', function() {
+        renderTasks();
+        updateFinalResult();
+        updateThemeUI();
+        fitContainer();
+    });
+
+    window.addEventListener('load', () => {
+        updateThemeUI();
+        renderTasks();
+        fitContainer();
+        setTimeout(fitContainer, 200);
+        setTimeout(fitContainer, 600);
+    });
+
+    window.addEventListener('resize', fitContainer);
+
+    window.addEventListener('storage', (e) => {
+        if (modules.some(m => m.storageKey === e.key) || e.key === THEME_KEY) {
+            updateThemeUI();
+            renderTasks();
+            fitContainer();
+        }
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            renderTasks();
+            updateFinalResult();
+            updateThemeUI();
+            fitContainer();
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            updateThemeUI();
+            renderTasks();
+            fitContainer();
+        }
+    });
+</script>
+</body>
+</html>

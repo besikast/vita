@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Изготовление патч-корда</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            padding: 24px 28px 36px;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            color: #0f3b5f;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 24px 0;
+            font-weight: 500;
+        }
+
+        .safety-box {
+            background: #fef7e0;
+            border-left: 6px solid #ff8c42;
+            border-radius: 28px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: space-between;
+        }
+
+        .safety-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .safety-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #b45f2b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .safety-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #4a3b2a;
+        }
+
+        .checklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            margin: 20px 0;
+        }
+
+        .checklist-table th,
+        .checklist-table td {
+            padding: 18px 16px;
+            vertical-align: top;
+            border-bottom: 1px solid #e2edf5;
+        }
+
+        .checklist-table th {
+            background: #f0f6fa;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1e4663;
+            text-align: left;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #1e4663;
+            font-size: 1.05rem;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            color: #2c5a7a;
+            margin-top: 4px;
+        }
+
+        .video-cell {
+            width: 200px;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 180px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #000;
+        }
+
+        .checkbox-cell {
+            width: 80px;
+            text-align: center;
+        }
+
+        .step-checkbox {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            accent-color: #2c8c5a;
+            transform: scale(1.1);
+        }
+
+        .step-completed {
+            background-color: #e8f5ee;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-gray {
+            background: #5f6c7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-gray:hover {
+            background: #3e4a5a;
+            transform: scale(0.97);
+        }
+
+        .btn-orange {
+            background: #ff8c42;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-orange:hover {
+            background: #e67e2e;
+            transform: scale(0.97);
+        }
+
+        .global-feedback {
+            margin-top: 24px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7b8c9e;
+            border-top: 1px solid #e2edf5;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .checklist-table th,
+            .checklist-table td {
+                display: block;
+                width: 100%;
+            }
+            .checklist-table tr {
+                display: block;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #dee4ed;
+            }
+            .video-cell, .checkbox-cell {
+                text-align: left;
+                padding-left: 16px;
+            }
+            video {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 Изготовление патч-корда RJ-45 (T568B)</h1>
+    <div class="sub">📌 Пошаговый чек-лист: отмечайте выполненные этапы, следите за прогрессом. Короткие видео помогут вспомнить каждый шаг.</div>
+
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="safety-box">
+        <div class="safety-item">
+            <div class="safety-title">⚠️ Безопасность при работе с кримпером</div>
+            <div class="safety-text">
+                • Не подставляйте пальцы под механизм обжима.<br>
+                • Перед обжимом убедитесь, что жилы вставлены до упора.<br>
+                • Используйте кримпер только по назначению.
+            </div>
+        </div>
+        <div class="safety-item">
+            <div class="safety-title">🔌 Как правильно держать кримпер</div>
+            <div class="safety-text">
+                • Кримпер должен плотно лежать в ладони.<br>
+                • Нажимайте плавно, до характерного щелчка.<br>
+                • После обжима визуально проверьте коннектор.
+            </div>
+        </div>
+        <div class="safety-item">
+            <div class="safety-title">📏 Важные замечания</div>
+            <div class="safety-text">
+                • Не зачищайте изоляцию жил ножом.<br>
+                • Длина зачистки внешней оболочки: 2–3 см.<br>
+                • После обжима проверьте кабель тестером.
+            </div>
+        </div>
+    </div>
+
+    <table class="checklist-table" id="checklistTable">
+        <thead>
+            <tr><th>Этап</th><th>Описание работы</th><th>Видео (mp4)</th><th>Выполнено</th></tr>
+        </thead>
+        <tbody>
+            <tr id="step1"><td class="step-title">1. Зачистка</td><td>Снять внешнюю оболочку на 2–3 см, не повредив жилы</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап1.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="1"></td></tr>
+            <tr id="step2"><td class="step-title">2. Расплетение и выравнивание</td><td>Распутать пары, разложить жилы по порядку цветов (T568B)</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап2.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="2"></td></tr>
+            <tr id="step3"><td class="step-title">3. Обрезка</td><td>Ровно отрезать жилы, оставив 1,2–1,5 см</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап3.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="3"></td></tr>
+            <tr id="step4"><td class="step-title">4. Вставка в коннектор</td><td>Аккуратно, до упора, чтобы жилы упёрлись в переднюю стенку</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап4.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="4"></td></tr>
+            <tr id="step5"><td class="step-title">5. Обжим</td><td>Кримпером до характерного щелчка</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап5.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="5"></td></tr>
+            <tr id="step6"><td class="step-title">6. Проверка</td><td>Правильный результат: прозвон 1–1, 2–2, …, 8–8 (тестер)</td>
+            <td class="video-cell"><video controls preload="metadata"><source src="этап6.mp4" type="video/mp4"></video></td>
+            <td class="checkbox-cell"><input type="checkbox" class="step-checkbox" data-step="6"></td></tr>
+        </tbody>
+    </table>
+
+    <div class="nav-buttons">
+        <button id="resetLocalBtn" class="btn-gray">🔄 Сбросить всё (только это задание)</button>
+        <button id="saveAndGoHomeBtn" class="btn-orange">🏠 Сохранить прогресс и на главную</button>
+    </div>
+    <div id="globalFeedback" class="global-feedback">📌 Отмечайте выполненные этапы после реального выполнения или просмотра видео.</div>
+    <footer>💡 Рекомендация: сначала посмотрите короткие видео каждого этапа, затем выполните обжим самостоятельно.</footer>
+</div>
+
+<script>
+    const PROGRESS_KEY = "patchcord_checklist";
+    const STATE_KEY = "patchcord_checklist_states";
+
+    function calculateProgress() {
+        const checkboxes = document.querySelectorAll('.step-checkbox');
+        let completed = 0;
+        checkboxes.forEach(cb => { if (cb.checked) completed++; });
+        return Math.round((completed / checkboxes.length) * 100);
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.getElementById('progressText').innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveFullState() {
+        let progress = calculateProgress();
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        const states = [];
+        document.querySelectorAll('.step-checkbox').forEach(cb => states.push(cb.checked));
+        localStorage.setItem(STATE_KEY, JSON.stringify(states));
+        window.dispatchEvent(new StorageEvent('storage', { key: PROGRESS_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function loadSavedState() {
+        const savedStates = localStorage.getItem(STATE_KEY);
+        if (savedStates) {
+            try {
+                const states = JSON.parse(savedStates);
+                const checkboxes = document.querySelectorAll('.step-checkbox');
+                checkboxes.forEach((cb, idx) => { cb.checked = states[idx] || false; });
+                updateRowStyles();
+            } catch(e) {}
+        }
+        updateProgressUI();
+    }
+
+    function updateRowStyles() {
+        document.querySelectorAll('.step-checkbox').forEach(cb => {
+            const row = cb.closest('tr');
+            if (cb.checked) row.classList.add('step-completed');
+            else row.classList.remove('step-completed');
+        });
+    }
+
+    function resetAllCheckboxes() {
+        const checkboxes = document.querySelectorAll('.step-checkbox');
+        checkboxes.forEach(cb => cb.checked = false);
+        updateRowStyles();
+        updateProgressUI();
+        saveFullState();
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveFullState();
+        updateRowStyles();
+        const globalDiv = document.getElementById('globalFeedback');
+        if (progress === 100) {
+            globalDiv.innerHTML = "🎉 Отлично! Все этапы изготовления патч-корда освоены. Прогресс сохранён!";
+            globalDiv.style.background = "#c8e6d9";
+        } else {
+            globalDiv.innerHTML = "📌 Отмечайте выполненные этапы. Прогресс автоматически сохраняется.";
+            globalDiv.style.background = "#eef2f5";
+        }
+    }
+
+    function resetLocal() {
+        if (confirm('Сбросить весь прогресс этого задания? Восстановить будет невозможно.')) {
+            resetAllCheckboxes();
+            document.getElementById('globalFeedback').innerHTML = "🔄 Все данные сброшены. Вы можете начать заново.";
+            document.getElementById('globalFeedback').style.background = "#eef2f5";
+        }
+    }
+
+    function saveAndGoHome() {
+        autoSaveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    // ========== ГЛОБАЛЬНЫЙ СБРОС С ГЛАВНОЙ СТРАНИЦЫ ==========
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            // Очищаем localStorage
+            localStorage.removeItem(PROGRESS_KEY);
+            localStorage.removeItem(STATE_KEY);
+            // Сбрасываем все чекбоксы на странице
+            resetAllCheckboxes();
+            // Обновляем сообщение
+            document.getElementById('globalFeedback').innerHTML = "🔄 Глобальный сброс выполнен. Данные очищены.";
+            document.getElementById('globalFeedback').style.background = "#eef2f5";
+        }
+    });
+
+    // Обработчик изменения чекбоксов
+    document.querySelectorAll('.step-checkbox').forEach(cb => cb.addEventListener('change', autoSaveAndUpdate));
+    
+    // Инициализация
+    loadSavedState();
+    autoSaveAndUpdate();
+    document.getElementById('resetLocalBtn').addEventListener('click', resetLocal);
+    document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+</script>
+</body>
+</html>

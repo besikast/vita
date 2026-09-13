@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Итоги</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            padding: 24px 28px 36px;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            color: #0f3b5f;
+            margin-bottom: 6px;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 24px 0;
+            font-weight: 500;
+        }
+
+        .switch-image {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .switch-image img {
+            max-width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 2px solid #f5c518;
+        }
+
+        .settings-panel {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 30px 28px;
+            border: 2px solid #f5c518;
+            color: white;
+        }
+
+        .settings-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 28px;
+            color: #f5c518;
+        }
+
+        .choice-group {
+            margin-bottom: 32px;
+        }
+
+        .choice-label {
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: block;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 130px;
+            padding: 12px 0;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 2px solid transparent;
+        }
+
+        .color-btn.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #f5c518;
+        }
+
+        .pink-bg { background: #ff69b4; color: #1a1a1a; }
+        .orange-bg { background: #ff8c42; color: #1a1a1a; }
+        .green-bg { background: #2c8c5a; color: white; }
+        .blue-bg { background: #3a7ca5; color: white; }
+
+        .link-options {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .link-btn {
+            background: #2a2a2a;
+            border: 2px solid #555;
+            padding: 10px 32px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: 0.1s;
+            font-size: 1rem;
+        }
+
+        .link-btn.selected {
+            border-color: #f5c518;
+            background: #3a3a3a;
+        }
+
+        .link-btn.green-link.selected { background: #2c8c5a; border-color: #f5c518; }
+        .link-btn.orange-link.selected { background: #ff8c42; border-color: #f5c518; color: #1a1a1a; }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-gray {
+            background: #5f6c7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-gray:hover { background: #3e4a5a; transform: scale(0.97); }
+
+        .btn-orange {
+            background: #ff8c42;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.1s;
+        }
+        .btn-orange:hover { background: #e67e2e; transform: scale(0.97); }
+
+        .global-feedback {
+            margin-top: 28px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7b8c9e;
+            border-top: 1px solid #e2edf5;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🏆 Итоги занятия: рефлексия</h1>
+    <div class="sub">📌 Выберите цвет, соответствующий вашему пониманию, и цвет линка на коммутаторе (зелёный – успех).</div>
+
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="switch-image">
+        <img id="switchImg" src="коммутатор_итог.jpg" alt="Коммутатор" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'150\'%3E%3Crect width=\'600\' height=\'150\' fill=\'%23333\'/%3E%3Ctext x=\'200\' y=\'80\' fill=\'%23f5c518\'%3EКоммутатор%3C/text%3E%3C/svg%3E'">
+    </div>
+
+    <div class="settings-panel">
+        <div class="settings-title">🔌 Рефлексия</div>
+        <div class="choice-group">
+            <div class="choice-label">🎨 Мой уровень понимания:</div>
+            <div class="color-options" id="understandingColors">
+                <div class="color-btn pink-bg" data-understand="pink">🌸 Розовый<br><small>Немного понял</small></div>
+                <div class="color-btn orange-bg" data-understand="orange">🟠 Оранжевый<br><small>Теория понятна</small></div>
+                <div class="color-btn green-bg" data-understand="green">🟢 Зелёный<br><small>Всё понял, могу сам</small></div>
+                <div class="color-btn blue-bg" data-understand="blue">🔵 Синий<br><small>Могу объяснить</small></div>
+            </div>
+        </div>
+        <div class="choice-group">
+            <div class="choice-label">🔌 Цвет линка на коммутаторе (индикатор):</div>
+            <div class="link-options" id="linkColors">
+                <div class="link-btn orange-link" data-link="orange">🟠 Оранжевый (ошибка)</div>
+                <div class="link-btn green-link" data-link="green">🟢 Зелёный (успех)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="resetLocalBtn" class="btn-gray">🔄 Сбросить всё (только это задание)</button>
+        <button id="saveAndGoHomeBtn" class="btn-orange">🏠 Сохранить прогресс и на главную</button>
+    </div>
+    <div id="globalFeedback" class="global-feedback">📌 Выберите уровень понимания и цвет линка, затем нажмите «Сохранить».</div>
+    <footer>💡 Успешное завершение: зелёный линк + любой цвет понимания.</footer>
+</div>
+
+<script>
+    const PROGRESS_KEY = "final_results";
+    const STATE_KEY = "final_reflection_state";
+
+    let selectedUnderstanding = null;
+    let selectedLinkColor = null;
+
+    function calculateProgress() {
+        if (selectedUnderstanding && selectedLinkColor === 'green') return 100;
+        if (selectedUnderstanding && selectedLinkColor === 'orange') return 50;
+        return 0;
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.getElementById('progressText').innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveFullState() {
+        let progress = calculateProgress();
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        const state = { understanding: selectedUnderstanding, linkColor: selectedLinkColor };
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        window.dispatchEvent(new StorageEvent('storage', { key: PROGRESS_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function loadSavedState() {
+        const saved = localStorage.getItem(STATE_KEY);
+        if (saved) {
+            try {
+                const state = JSON.parse(saved);
+                selectedUnderstanding = state.understanding;
+                selectedLinkColor = state.linkColor;
+                if (selectedUnderstanding) {
+                    document.querySelectorAll('.color-btn').forEach(btn => {
+                        if (btn.dataset.understand === selectedUnderstanding) btn.classList.add('selected');
+                    });
+                }
+                if (selectedLinkColor) {
+                    document.querySelectorAll('.link-btn').forEach(btn => {
+                        if (btn.dataset.link === selectedLinkColor) btn.classList.add('selected');
+                    });
+                }
+            } catch(e) {}
+        }
+        updateProgressUI();
+        updateGlobalMessage();
+    }
+
+    function updateGlobalMessage() {
+        let progress = calculateProgress();
+        const globalDiv = document.getElementById('globalFeedback');
+        if (progress === 100) {
+            globalDiv.innerHTML = "🎉 Отлично! Рефлексия завершена. Прогресс сохранён!";
+            globalDiv.style.background = "#c8e6d9";
+        } else if (progress === 50) {
+            globalDiv.innerHTML = "⚠️ Вы выбрали оранжевый линк. Для успеха нужен зелёный линк.";
+            globalDiv.style.background = "#fff0e0";
+        } else {
+            globalDiv.innerHTML = "📌 Выберите уровень понимания и цвет линка. Прогресс сохранится автоматически.";
+            globalDiv.style.background = "#eef2f5";
+        }
+    }
+
+    function autoSaveAndUpdate() {
+        updateProgressUI();
+        saveFullState();
+        updateGlobalMessage();
+    }
+
+    document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedUnderstanding = btn.dataset.understand;
+            autoSaveAndUpdate();
+        });
+    });
+
+    document.querySelectorAll('.link-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.link-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedLinkColor = btn.dataset.link;
+            autoSaveAndUpdate();
+        });
+    });
+
+    function resetLocal() {
+        if (confirm('Сбросить весь прогресс этого задания? Восстановить будет невозможно.')) {
+            selectedUnderstanding = null;
+            selectedLinkColor = null;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.link-btn').forEach(b => b.classList.remove('selected'));
+            autoSaveAndUpdate();
+            document.getElementById('globalFeedback').innerHTML = "🔄 Все данные сброшены. Вы можете начать заново.";
+            document.getElementById('globalFeedback').style.background = "#eef2f5";
+        }
+    }
+
+    function saveAndGoHome() {
+        autoSaveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            localStorage.removeItem(PROGRESS_KEY);
+            localStorage.removeItem(STATE_KEY);
+            selectedUnderstanding = null;
+            selectedLinkColor = null;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.link-btn').forEach(b => b.classList.remove('selected'));
+            autoSaveAndUpdate();
+            document.getElementById('globalFeedback').innerHTML = "🔄 Глобальный сброс выполнен. Данные очищены.";
+            document.getElementById('globalFeedback').style.background = "#eef2f5";
+        }
+    });
+
+    loadSavedState();
+    document.getElementById('resetLocalBtn').addEventListener('click', resetLocal);
+    document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+</script>
+</body>
+</html>

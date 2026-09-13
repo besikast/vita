@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Диагностика сети</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 24px 20px;
+            color: #1e2a3a;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 20px 24px 30px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 4px 0;
+            color: #0f3b5f;
+        }
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #ff8c42;
+            padding-left: 16px;
+            margin: 8px 0 24px 0;
+            font-weight: 500;
+        }
+        .diagnostic-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-bottom: 30px;
+        }
+        .left-panel {
+            flex: 1.2;
+            min-width: 320px;
+            background: #fefaf5;
+            border-radius: 28px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .right-panel {
+            flex: 1.4;
+            min-width: 320px;
+            background: #f8fafd;
+            border-radius: 28px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0 0 12px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #ff8c42;
+            padding-left: 12px;
+        }
+        .network-scheme {
+            background: #eef2f7;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .scheme-img {
+            max-width: 100%;
+            background: #f9f9ff;
+            border-radius: 20px;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+        }
+        .scheme-img img {
+            max-width: 100%;
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+        }
+        .video-block {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .video-card {
+            background: white;
+            border-radius: 24px;
+            padding: 12px;
+            flex: 1;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            border-radius: 16px;
+            background: #000;
+            outline: none;
+        }
+        .problem-options {
+            background: white;
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 8px;
+            border: 1px solid #dee4ed;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .options-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+            color: #1e4663;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 3px solid #ff8c42;
+            padding-left: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            margin: 6px 0;
+            background: #fafafc;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .option:hover {
+            background: #eef2f7;
+        }
+        .option input {
+            transform: scale(1.1);
+            margin-left: 12px;
+            cursor: pointer;
+        }
+        button {
+            background: #2c5a7a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 28px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 12px;
+            transition: all 0.1s;
+        }
+        button:hover {
+            background: #1f4460;
+            transform: scale(0.97);
+        }
+        .reset-btn {
+            background: #5f6c7a;
+            margin-left: 12px;
+        }
+        .feedback {
+            margin-top: 20px;
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            font-weight: 500;
+            white-space: pre-line;
+            font-size: 0.95rem;
+        }
+        .success {
+            background: #c8e6d9;
+            color: #1e5a3a;
+            border-left: 5px solid #2c8c5a;
+        }
+        .error {
+            background: #ffe0db;
+            color: #b13e3e;
+            border-left: 5px solid #e67e5a;
+        }
+        .info {
+            background: #e0ecf5;
+            color: #1f5e8c;
+            border-left: 5px solid #3a7ca5;
+        }
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 12px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #2c8c5a;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 16px;
+        }
+        footer {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 24px;
+            color: #6c86a3;
+        }
+        @media (max-width: 800px) {
+            .video-block { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚠️ Диагностика сети: нерабочая сеть</h1>
+    <div class="sub">🔍 Проанализируйте схему, посмотрите видео с индикаторами и тестером, затем выберите причину сбоя.</div>
+
+    <!-- Индикатор прогресса -->
+    <div class="progress-text" id="progressText">Прогресс: 0%</div>
+    <div class="progress-bar-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="diagnostic-row">
+        <!-- Левая колонка: схема сети + выбор неисправности -->
+        <div class="left-panel">
+            <div class="panel-title">📡 Схема сети</div>
+            <div class="network-scheme">
+                <div class="scheme-img" id="schemeContainer">
+                    <img id="schemeImage" src="схемасети.jpg" alt="Схема сети" style="max-width:100%; border-radius:12px;" 
+                         onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:20px;color:gray;\'>⚠️ Файл схемасети.jpg не найден. Поместите его в папку с HTML.</div>'">
+                    <div style="margin-top: 12px; font-style: italic; background: #fff1e0; padding: 8px; border-radius: 20px; font-size: 0.85rem;">
+                        📌 Описание: ПК1 не имеет сетевого подключения, ПК2 работает нормально.<br>
+                        Администратор проверил индикаторы и использовал тестер.
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК ВЫБОРА НЕИСПРАВНОСТИ -->
+            <div class="problem-options">
+                <div class="options-title">🔍 Какая неисправность обнаружена?</div>
+                <label class="option">
+                    <input type="radio" name="fault" value="broken_cable"> 🔴 Полный обрыв кабеля (нет линка)
+                </label>
+                <label class="option">
+                    <input type="radio" name="fault" value="switch_fault"> 🟠 Неисправен порт коммутатора
+                </label>
+                <label class="option">
+                    <input type="radio" name="fault" value="wrong_cross"> 🟡 Неправильный обжим (перепутана распиновка)
+                </label>
+                <label class="option">
+                    <input type="radio" name="fault" value="server_down"> 🔵 Не работает сетевая карта сервера
+                </label>
+                <div style="text-align: center; margin-top: 18px;">
+                    <button id="checkDiagnosticBtn">🔎 Диагностировать проблему</button>
+                    <button id="resetDiagnosticBtn" class="reset-btn">🔄 Сбросить выбор (только это задание)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка: видео-диагностика -->
+        <div class="right-panel">
+            <div class="panel-title">🎥 Видео-диагностика (5 сек)</div>
+            <div class="video-block">
+                <div class="video-card">
+                    <div>🖥️ Видео 1: Сетевая карта ПК1</div>
+                    <div id="video1Container">
+                        <video id="video1" controls style="width:100%; border-radius:16px;">
+                            <source src="сетеваякарта.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div>🔌 Видео 2: Коммутатор (порты)</div>
+                    <div id="video2Container">
+                        <video id="video2" controls style="width:100%; border-radius:16px;">
+                            <source src="коммутатор.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div>📡 Видео 3: Кабельный тестер</div>
+                    <div id="video3Container">
+                        <video id="video3" controls style="width:100%; border-radius:16px;">
+                            <source src="тестер.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <div></div>
+        <button id="saveAndGoHomeBtn" style="background: #ff8c42;">🏠 Сохранить прогресс и на главную</button>
+    </div>
+    <div id="diagnosticFeedback" class="feedback info">📌 Изучите схему и видео, затем выберите причину неисправности и нажмите «Диагностировать».</div>
+    <footer>💡 Подсказка: обратите внимание на показания тестера и индикацию линка. Если линк есть, но тестер показывает несовпадение — проблема в обжиме.</footer>
+</div>
+
+<script>
+    // ========== КЛЮЧ ДЛЯ ХРАНЕНИЯ ПРОГРЕССА ==========
+    const PAGE_STORAGE_KEY = "network_diagnostic_progress";
+
+    // ========== ЭЛЕМЕНТЫ DOM ==========
+    const checkBtn = document.getElementById('checkDiagnosticBtn');
+    const resetBtn = document.getElementById('resetDiagnosticBtn');
+    const saveAndGoHomeBtn = document.getElementById('saveAndGoHomeBtn');
+    const feedbackDiv = document.getElementById('diagnosticFeedback');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    // ========== СОСТОЯНИЕ ==========
+    let selectedAnswer = null;
+    let isDiagnosed = false;
+    let isCorrect = false;
+
+    // ========== ФУНКЦИИ ПРОГРЕССА ==========
+    function calculateProgress() {
+        if (isDiagnosed && isCorrect) return 100;
+        if (isDiagnosed) return 50;
+        return 0;
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        progressFill.style.width = progress + '%';
+        progressText.innerText = `Прогресс: ${progress}%`;
+        return progress;
+    }
+
+    function saveProgressToLocalStorage() {
+        let progress = calculateProgress();
+        // Сохраняем также выбранный ответ
+        const state = {
+            progress: progress,
+            selectedAnswer: selectedAnswer,
+            isDiagnosed: isDiagnosed,
+            isCorrect: isCorrect
+        };
+        localStorage.setItem(PAGE_STORAGE_KEY, JSON.stringify(state));
+        console.log(`💾 Сохранён прогресс диагностики: ${progress}%`);
+        window.dispatchEvent(new StorageEvent('storage', { key: PAGE_STORAGE_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function loadSavedState() {
+        const saved = localStorage.getItem(PAGE_STORAGE_KEY);
+        if (saved) {
+            try {
+                const state = JSON.parse(saved);
+                selectedAnswer = state.selectedAnswer;
+                isDiagnosed = state.isDiagnosed || false;
+                isCorrect = state.isCorrect || false;
+                // Восстанавливаем выбранную радио-кнопку
+                if (selectedAnswer) {
+                    const radio = document.querySelector(`input[name="fault"][value="${selectedAnswer}"]`);
+                    if (radio) radio.checked = true;
+                }
+                // Восстанавливаем сообщение
+                if (isDiagnosed) {
+                    if (isCorrect) {
+                        feedbackDiv.innerHTML = '✅ ПРАВИЛЬНО! Неисправность: неправильный обжим патч-корда (перепутана распиновка).\n\nТестер подтверждает нарушение схемы обжима. При этом линк на сетевой карте присутствует (кабель не оборван), но коммутатор фиксирует ошибки — данные не проходят.';
+                        feedbackDiv.classList.remove('error', 'info');
+                        feedbackDiv.classList.add('success');
+                    } else {
+                        let hint = '';
+                        if (selectedAnswer === 'broken_cable') hint = ' При обрыве линк бы отсутствовал полностью, но индикаторы горят.';
+                        else if (selectedAnswer === 'switch_fault') hint = ' Неисправный порт не давал бы линка, но тестер показывает электрическую целостность.';
+                        else if (selectedAnswer === 'server_down') hint = ' Если бы сервер был неисправен, ПК2 тоже не работал бы.';
+                        feedbackDiv.innerHTML = `❌ НЕВЕРНО.${hint} Правильный ответ: «Неправильный обжим (перепутана распиновка)». Проанализируйте видео: тестер показывает несовпадение, на коммутаторе мигание ошибок, линк частично есть — типичный признак ошибки в распиновке.`;
+                        feedbackDiv.classList.remove('success', 'info');
+                        feedbackDiv.classList.add('error');
+                    }
+                }
+                updateProgressUI();
+            } catch(e) {}
+        }
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveProgressToLocalStorage();
+        if (progress === 100) {
+            // сообщение уже установлено при диагностике
+        }
+    }
+
+    // ========== ЛОГИКА ДИАГНОСТИКИ ==========
+    function checkDiagnostic() {
+        const selectedRadio = document.querySelector('input[name="fault"]:checked');
+        if (!selectedRadio) {
+            feedbackDiv.innerHTML = '❌ Выберите один из вариантов неисправности перед диагностикой.';
+            feedbackDiv.classList.remove('success', 'info');
+            feedbackDiv.classList.add('error');
+            isDiagnosed = false;
+            isCorrect = false;
+            selectedAnswer = null;
+            autoSaveAndUpdate();
+            return;
+        }
+        
+        selectedAnswer = selectedRadio.value;
+        isDiagnosed = true;
+        
+        // Правильный ответ — неправильный обжим
+        if (selectedAnswer === 'wrong_cross') {
+            isCorrect = true;
+            feedbackDiv.innerHTML = '✅ ПРАВИЛЬНО! Неисправность: неправильный обжим патч-корда (перепутана распиновка).\n\nТестер подтверждает нарушение схемы обжима. При этом линк на сетевой карте присутствует (кабель не оборван), но коммутатор фиксирует ошибки — данные не проходят.';
+            feedbackDiv.classList.remove('error', 'info');
+            feedbackDiv.classList.add('success');
+        } else {
+            isCorrect = false;
+            let hint = '';
+            if (selectedAnswer === 'broken_cable') hint = ' При обрыве линк бы отсутствовал полностью, но индикаторы горят.';
+            else if (selectedAnswer === 'switch_fault') hint = ' Неисправный порт не давал бы линка, но тестер показывает электрическую целостность.';
+            else if (selectedAnswer === 'server_down') hint = ' Если бы сервер был неисправен, ПК2 тоже не работал бы.';
+            feedbackDiv.innerHTML = `❌ НЕВЕРНО.${hint} Правильный ответ: «Неправильный обжим (перепутана распиновка)». Проанализируйте видео: тестер показывает несовпадение, на коммутаторе мигание ошибок, линк частично есть — типичный признак ошибки в распиновке.`;
+            feedbackDiv.classList.remove('success', 'info');
+            feedbackDiv.classList.add('error');
+        }
+        autoSaveAndUpdate();
+    }
+
+    // ========== СБРОС ВЫБОРА (только для этого задания) ==========
+    function resetDiagnostic() {
+        if (confirm('Сбросить прогресс этого задания? Восстановить будет невозможно.')) {
+            const radios = document.querySelectorAll('input[name="fault"]');
+            radios.forEach(radio => radio.checked = false);
+            selectedAnswer = null;
+            isDiagnosed = false;
+            isCorrect = false;
+            feedbackDiv.innerHTML = '📌 Выбор сброшен. Заново выберите вариант ответа и нажмите «Диагностировать».';
+            feedbackDiv.classList.remove('success', 'error');
+            feedbackDiv.classList.add('info');
+            autoSaveAndUpdate();
+        }
+    }
+
+    // ========== СОХРАНЕНИЕ И ПЕРЕХОД НА ГЛАВНУЮ ==========
+    function saveAndGoHome() {
+        autoSaveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    // ========== ОБРАБОТКА ОШИБОК ЗАГРУЗКИ ВИДЕО ==========
+    const video1 = document.getElementById('video1');
+    const video2 = document.getElementById('video2');
+    const video3 = document.getElementById('video3');
+    const video1Container = document.getElementById('video1Container');
+    const video2Container = document.getElementById('video2Container');
+    const video3Container = document.getElementById('video3Container');
+    
+    if (video1) {
+        video1.onerror = () => { video1Container.innerHTML = '<div style="padding:20px;color:white;background:#1a2c3e;border-radius:20px;">⚠️ Файл сетеваякарта.mp4 не найден</div>'; };
+    }
+    if (video2) {
+        video2.onerror = () => { video2Container.innerHTML = '<div style="padding:20px;color:white;background:#1a2c3e;border-radius:20px;">⚠️ Файл коммутатор.mp4 не найден</div>'; };
+    }
+    if (video3) {
+        video3.onerror = () => { video3Container.innerHTML = '<div style="padding:20px;color:white;background:#1a2c3e;border-radius:20px;">⚠️ Файл тестер.mp4 не найден</div>'; };
+    }
+
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    function init() {
+        loadSavedState();
+        checkBtn.addEventListener('click', checkDiagnostic);
+        resetBtn.addEventListener('click', resetDiagnostic);
+        saveAndGoHomeBtn.addEventListener('click', saveAndGoHome);
+    }
+    
+    init();
+</script>
+</body>
+</html>

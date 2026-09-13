@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Типы обжима</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a1a1a;
+        }
+
+        .viewport {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        /* ===== КОНТЕЙНЕР ===== */
+        .container {
+            width: 1400px;
+            max-width: 100%;
+            height: 100%;
+            max-height: 100%;
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            border: 1px solid #f5c518;
+            padding: 18px 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transform-origin: center center;
+            overflow: hidden;
+        }
+
+        /* ===== ЗАГОЛОВОК ===== */
+        .topic-header {
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 10px 20px;
+            color: #f5c518;
+            border-left: 8px solid #f5c518;
+            flex-shrink: 0;
+        }
+        .topic-header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #f5c518;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topic-header p {
+            font-size: 0.78rem;
+            color: #dddddd;
+            font-weight: 500;
+        }
+
+        /* ===== ПРОГРЕСС ===== */
+        .progress-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .progress-label-text {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+        }
+        .progress-bar-container {
+            flex: 1;
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #f5c518;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* ===== ПУЛ УСТРОЙСТВ ===== */
+        .devices-pool {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            background: #fef9e6;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 2px solid #f5c518;
+            flex-shrink: 0;
+            align-items: center;
+        }
+        .devices-pool-title {
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: #8a6d1e;
+            white-space: nowrap;
+        }
+        .drag-device {
+            background: #1a1a1a;
+            color: #f5c518;
+            border-radius: 40px;
+            padding: 6px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: grab;
+            border: 1px solid #f5c518;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: 0.12s;
+        }
+        .drag-device:hover {
+            background: #f5c518;
+            color: #1a1a1a;
+            transform: scale(1.04);
+        }
+        .drag-device:active { cursor: grabbing; }
+        .drag-device img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+        .drag-device.dragging { opacity: 0.5; }
+
+        /* ===== ОСНОВНАЯ ЗОНА ===== */
+        .main-row {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Левая панель: карточки */
+        .left-column {
+            flex: 2.2;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+        }
+
+        /* Правая панель: справочник */
+        .right-column {
+            flex: 1;
+            background: #fef9e6;
+            border-radius: 28px;
+            padding: 14px 16px;
+            border: 2px solid #f5c518;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-left: 4px solid #f5c518;
+            padding-left: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ===== КАРТОЧКА КАБЕЛЯ ===== */
+        .cable-card {
+            background: #ffffff;
+            border-radius: 22px;
+            border: 2px solid #e0e0e0;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: 0.12s;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .cable-card:hover {
+            border-color: #f5c518;
+        }
+
+        .cable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .cable-name {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #1a1a1a;
+        }
+        .select-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #fef9e6;
+            padding: 5px 12px;
+            border-radius: 60px;
+            border: 1px solid #f5c518;
+        }
+        .select-group label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #8a6d1e;
+        }
+        select {
+            padding: 4px 8px;
+            border-radius: 40px;
+            border: 1px solid #cbdde9;
+            background: white;
+            font-weight: 500;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-family: inherit;
+            max-width: 160px;
+        }
+        select:focus {
+            outline: none;
+            border-color: #f5c518;
+        }
+
+        .cable-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .cable-line {
+            flex: 3;
+            min-width: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fef9e6;
+            border-radius: 14px;
+            padding: 6px;
+            border: 1px solid #f5c518;
+            cursor: zoom-in;
+            transition: 0.12s;
+            overflow: hidden;
+        }
+        .cable-line:hover {
+            box-shadow: 0 4px 12px rgba(245,197,24,0.5);
+        }
+        .cable-line img {
+            max-width: 100%;
+            max-height: 60px;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            transition: transform 0.2s;
+        }
+        .cable-line:hover img {
+            transform: scale(1.05);
+        }
+
+        /* ===== ENDPOINT ===== */
+        .endpoint {
+            flex: 1;
+            min-width: 100px;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 6px 8px;
+            text-align: center;
+            border: 2px dashed #c0cfde;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.12s;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .endpoint.drag-over {
+            background: #fff9e6;
+            border-color: #f5c518;
+            border-style: solid;
+        }
+        .endpoint-title {
+            font-weight: 700;
+            font-size: 0.6rem;
+            margin-bottom: 3px;
+            color: #8a6d1e;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .device-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 0;
+        }
+        .device-img {
+            max-width: 36px;
+            max-height: 36px;
+            margin-bottom: 2px;
+            object-fit: contain;
+        }
+        .device-name {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #aa6f5e;
+            cursor: pointer;
+            margin-top: 2px;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+        .remove-btn:hover {
+            color: #b13e3e;
+        }
+        .empty-hint {
+            font-size: 0.62rem;
+            color: #999;
+            font-style: italic;
+            padding: 4px;
+            line-height: 1.2;
+        }
+
+        /* ===== СПРАВОЧНИК ===== */
+        .info-block {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid #f0e2b8;
+            font-size: 0.72rem;
+            line-height: 1.45;
+            color: #2c3e50;
+            flex-shrink: 0;
+        }
+        .info-block strong {
+            color: #1a1a1a;
+        }
+        .info-block-title {
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        /* ===== КНОПКИ ===== */
+        .btn {
+            background: #1a1a1a;
+            border: 1px solid #f5c518;
+            color: #f5c518;
+            font-weight: bold;
+            padding: 10px 18px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: 0.12s;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            background: #f5c518;
+            color: #1a1a1a;
+            transform: scale(0.97);
+        }
+        .btn-reset { background: #2a2a2a; }
+
+        /* ===== ФИДБЕК ===== */
+        .feedback {
+            background: #f5f5f5;
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-left: 4px solid #999;
+            flex-shrink: 0;
+            text-align: center;
+        }
+        .feedback.success { background: #c8e6d9; color: #1e5a3a; border-left-color: #2c8c5a; }
+        .feedback.error { background: #ffe0db; color: #b13e3e; border-left-color: #e67e5a; }
+        .feedback.info { background: #fef9e6; color: #8a6d1e; border-left-color: #f5c518; }
+
+        /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .nav-buttons .btn { flex: 1; }
+
+        footer {
+            text-align: center;
+            font-size: 0.68rem;
+            color: #6c6c6c;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        /* ===== МОДАЛЬНОЕ ОКНО ===== */
+        .image-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .image-modal.active { display: flex; opacity: 1; }
+        .image-modal-inner {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            background: #ffffff;
+            border-radius: 24px;
+            border: 3px solid #f5c518;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.25s ease;
+        }
+        .image-modal.active .image-modal-inner { transform: scale(1); }
+        .image-modal-inner img {
+            max-width: 85vw;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 12px;
+            display: block;
+        }
+        .image-modal-title {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #f5c518;
+            padding: 8px 24px;
+            border-radius: 60px;
+            border: 2px solid #f5c518;
+            font-weight: 800;
+            font-size: 1rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .image-modal-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f5c518;
+            border: 2px solid #1a1a1a;
+            color: #1a1a1a;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            z-index: 10;
+        }
+        .image-modal-close:hover {
+            background: #ffffff;
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* ===== ПЕЧАТЬ ===== */
+        @media print {
+            html, body { overflow: visible; height: auto; background: white; }
+            .viewport { width: auto; height: auto; display: block; overflow: visible; padding: 0; }
+            .container {
+                transform: none !important;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                border-radius: 0;
+                border: none;
+                padding: 10px;
+            }
+            .image-modal { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО ДЛЯ КАРТИНКИ ===== -->
+<div class="image-modal" id="imageModal">
+    <div class="image-modal-inner">
+        <div class="image-modal-title" id="imageModalTitle">Кабель</div>
+        <button class="image-modal-close" id="imageModalClose" title="Закрыть (Esc)">✖</button>
+        <img id="modalImage" src="" alt="Увеличенное изображение">
+    </div>
+</div>
+
+<div class="viewport" id="viewport">
+    <div class="container" id="container">
+
+        <!-- ЗАГОЛОВОК -->
+        <div class="topic-header">
+            <h1>🔌 Типы обжима патч-корда</h1>
+            <p>📌 Перетащите устройства на концы кабелей, выберите тип и стандарт обжима. Кликните по фото для увеличения.</p>
+        </div>
+
+        <!-- ПРОГРЕСС -->
+        <div class="progress-bar-wrap">
+            <span class="progress-label-text">📊 Прогресс:</span>
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">0%</span>
+        </div>
+
+        <!-- ПУЛ УСТРОЙСТВ -->
+        <div class="devices-pool" id="devicesPool">
+            <div class="devices-pool-title">📦 Перетащите устройство:</div>
+        </div>
+
+        <!-- ОСНОВНАЯ ЗОНА -->
+        <div class="main-row">
+
+            <!-- ЛЕВАЯ ПАНЕЛЬ: КАРТОЧКИ -->
+            <div class="left-column" id="cablesContainer"></div>
+
+            <!-- ПРАВАЯ ПАНЕЛЬ: СПРАВОЧНИК -->
+            <div class="right-column">
+                <div class="panel-title">📘 Стандарты обжима RJ-45</div>
+
+                <div class="info-block">
+                    <div class="info-block-title">🔌 T568A и T568B</div>
+                    Два основных стандарта раскладки цветных пар в коннекторе.
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">⭐ В России и СНГ</div>
+                    Для прямого обжима (компьютер — коммутатор) чаще всего применяют <strong>T568A</strong> и <strong>T568B</strong>.
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">🔄 Кроссовый (crossover)</div>
+                    <strong>T568A</strong> на одном конце, <strong>T568B</strong> на другом. Для соединения двух компьютеров напрямую.
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">🧰 Практические советы</div>
+                    • Соблюдайте выбранный стандарт для всех патч-кордов.<br>
+                    • Для гигабитных сетей важна правильная распиновка.<br>
+                    • После обжима обязательно проверяйте тестером.<br>
+                    • Для двух ПК напрямую — кроссовый кабель.
+                </div>
+            </div>
+        </div>
+
+        <!-- ФИДБЕК -->
+        <div id="globalFeedback" class="feedback info">
+            📌 Заполните все три схемы: перетащите устройства и выберите параметры обжима.
+        </div>
+
+        <!-- НИЖНЯЯ ПАНЕЛЬ -->
+        <div class="nav-buttons">
+            <button id="resetLocalBtn" class="btn btn-reset">🔄 Сбросить</button>
+            <button id="saveAndGoHomeBtn" class="btn">🏠 Сохранить и на главную</button>
+        </div>
+
+        <footer>💡 Правила: прямой кабель (T568A или T568B) — компьютер ↔ коммутатор. Кроссовый (T568A+T568B) — компьютер ↔ компьютер.</footer>
+    </div>
+</div>
+
+<script>
+    // ========== КЛЮЧИ ==========
+    const PROGRESS_KEY = "crimping_types_progress";
+    const STATE_KEY = "crimping_selections";
+
+    // ========== ДАННЫЕ ==========
+    const cableTypes = [
+        { id: "straightA", name: "Кабель 1", img: "T568A.jpg", expectedType: "straight", expectedStd: "T568A" },
+        { id: "straightB", name: "Кабель 2", img: "T568B.jpg", expectedType: "straight", expectedStd: "T568B" },
+        { id: "crossover", name: "Кабель 3", img: "T568A_B.jpg", expectedType: "crossover", expectedStd: "crossover" }
+    ];
+
+    let cableStates = {
+        straightA: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+        straightB: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+        crossover: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" }
+    };
+
+    const typeOptions = [
+        { value: "straight", label: "Прямой" },
+        { value: "crossover", label: "Кроссовый" }
+    ];
+    const stdOptions = [
+        { value: "T568A", label: "T568A" },
+        { value: "T568B", label: "T568B" },
+        { value: "crossover", label: "T568A+T568B" }
+    ];
+
+    // DOM
+    const container = document.getElementById('cablesContainer');
+    const devicesPool = document.getElementById('devicesPool');
+    const globalFeedbackDiv = document.getElementById('globalFeedback');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    // ========== ПРОГРЕСС ==========
+    function calculateProgress() {
+        let correctCount = 0;
+
+        const stateA = cableStates.straightA;
+        const devicesOkA = (stateA.leftDevice === "computer" && stateA.rightDevice === "switch") ||
+                           (stateA.leftDevice === "switch" && stateA.rightDevice === "computer");
+        if (stateA.selectedType === "straight" && stateA.selectedStd === "T568A" && devicesOkA) correctCount++;
+
+        const stateB = cableStates.straightB;
+        const devicesOkB = (stateB.leftDevice === "computer" && stateB.rightDevice === "switch") ||
+                           (stateB.leftDevice === "switch" && stateB.rightDevice === "computer");
+        if (stateB.selectedType === "straight" && stateB.selectedStd === "T568B" && devicesOkB) correctCount++;
+
+        const stateC = cableStates.crossover;
+        const devicesOkC = (stateC.leftDevice === "computer" && stateC.rightDevice === "computer");
+        if (stateC.selectedType === "crossover" && stateC.selectedStd === "crossover" && devicesOkC) correctCount++;
+
+        return Math.round((correctCount / 3) * 100);
+    }
+
+    function updateProgressUI() {
+        let progress = calculateProgress();
+        progressFill.style.width = progress + '%';
+        progressText.innerText = progress + '%';
+        return progress;
+    }
+
+    function saveFullState() {
+        let progress = calculateProgress();
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        localStorage.setItem(STATE_KEY, JSON.stringify(cableStates));
+        window.dispatchEvent(new StorageEvent('storage', { key: PROGRESS_KEY, newValue: JSON.stringify(progress) }));
+        return progress;
+    }
+
+    function loadSavedState() {
+        const saved = localStorage.getItem(STATE_KEY);
+        if (saved) {
+            try {
+                const loaded = JSON.parse(saved);
+                for (let id in loaded) {
+                    if (cableStates[id]) cableStates[id] = loaded[id];
+                }
+            } catch(e) {}
+        }
+        updateProgressUI();
+    }
+
+    function autoSaveAndUpdate() {
+        let progress = updateProgressUI();
+        saveFullState();
+        if (progress === 100) {
+            globalFeedbackDiv.innerHTML = "🎉 Отлично! Все три варианта обжима настроены правильно. Прогресс сохранён!";
+            globalFeedbackDiv.className = 'feedback success';
+        } else {
+            globalFeedbackDiv.innerHTML = `📊 Прогресс: ${progress}% правильных ответов. Продолжайте!`;
+            globalFeedbackDiv.className = 'feedback info';
+        }
+    }
+
+    // ========== СЕЛЕКТЫ ==========
+    function createSelect(options, currentValue, onChangeCallback) {
+        const select = document.createElement('select');
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = "";
+        defaultOpt.textContent = "--";
+        select.appendChild(defaultOpt);
+        options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.label;
+            if (currentValue === opt.value) option.selected = true;
+            select.appendChild(option);
+        });
+        select.addEventListener('change', (e) => onChangeCallback(e.target.value));
+        return select;
+    }
+
+    // ========== РЕНДЕР КАБЕЛЯ ==========
+    function renderCable(cable) {
+        const state = cableStates[cable.id];
+        const card = document.createElement('div');
+        card.className = 'cable-card';
+        card.dataset.id = cable.id;
+
+        // Заголовок
+        const header = document.createElement('div');
+        header.className = 'cable-header';
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'cable-name';
+        nameSpan.innerText = cable.name;
+
+        const selectGroup = document.createElement('div');
+        selectGroup.className = 'select-group';
+
+        const typeLabel = document.createElement('label');
+        typeLabel.innerHTML = '📡 Тип: ';
+        const typeSelect = createSelect(typeOptions, state.selectedType, (val) => {
+            state.selectedType = val;
+            renderAll();
+            autoSaveAndUpdate();
+        });
+        typeLabel.appendChild(typeSelect);
+
+        const stdLabel = document.createElement('label');
+        stdLabel.innerHTML = '🔌 Стандарт: ';
+        const stdSelect = createSelect(stdOptions, state.selectedStd, (val) => {
+            state.selectedStd = val;
+            renderAll();
+            autoSaveAndUpdate();
+        });
+        stdLabel.appendChild(stdSelect);
+
+        selectGroup.appendChild(typeLabel);
+        selectGroup.appendChild(stdLabel);
+        header.appendChild(nameSpan);
+        header.appendChild(selectGroup);
+
+        // Визуальная часть
+        const visualDiv = document.createElement('div');
+        visualDiv.className = 'cable-visual';
+
+        const leftEndpoint = createEndpoint('left', cable.id, state.leftDevice);
+
+        const cableLine = document.createElement('div');
+        cableLine.className = 'cable-line';
+        cableLine.setAttribute('data-cable-img', cable.img);
+        cableLine.setAttribute('data-cable-name', cable.name);
+        cableLine.title = 'Нажмите, чтобы увеличить';
+        const img = document.createElement('img');
+        img.src = cable.img;
+        img.alt = cable.name;
+        img.onerror = () => { img.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'50\'%3E%3Crect width=\'200\' height=\'50\' fill=\'%23fef9e6\'/%3E%3Ctext x=\'30\' y=\'30\' fill=\'%238a6d1e\' font-size=\'12\' font-weight=\'bold\'%3E' + cable.name + '%3C/text%3E%3C/svg%3E'; };
+        cableLine.appendChild(img);
+        cableLine.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openImageModal(img.src, cable.name);
+        });
+
+        const rightEndpoint = createEndpoint('right', cable.id, state.rightDevice);
+
+        visualDiv.appendChild(leftEndpoint);
+        visualDiv.appendChild(cableLine);
+        visualDiv.appendChild(rightEndpoint);
+
+        card.appendChild(header);
+        card.appendChild(visualDiv);
+        return card;
+    }
+
+    // ========== ENDPOINT ==========
+    function createEndpoint(side, cableId, currentDevice) {
+        const endpoint = document.createElement('div');
+        endpoint.className = 'endpoint';
+        endpoint.setAttribute('data-side', side);
+        endpoint.setAttribute('data-cable', cableId);
+
+        const title = document.createElement('div');
+        title.className = 'endpoint-title';
+        title.innerText = side === 'left' ? 'ЛЕВЫЙ' : 'ПРАВЫЙ';
+        endpoint.appendChild(title);
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'device-placeholder';
+
+        if (currentDevice) {
+            const deviceImg = document.createElement('img');
+            deviceImg.className = 'device-img';
+            deviceImg.src = currentDevice === 'computer' ? 'компьютер.jpg' : 'коммутатор.jpg';
+            deviceImg.alt = currentDevice;
+            deviceImg.onerror = () => { deviceImg.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'%3E%3Crect width=\'40\' height=\'40\' fill=\'%23fef9e6\'/%3E%3Ctext x=\'10\' y=\'25\' fill=\'%238a6d1e\' font-size=\'11\' font-weight=\'bold\'%3E' + (currentDevice === 'computer' ? 'ПК' : 'SW') + '%3C/text%3E%3C/svg%3E'; };
+            const deviceName = document.createElement('div');
+            deviceName.className = 'device-name';
+            deviceName.innerText = currentDevice === 'computer' ? 'Компьютер' : 'Коммутатор';
+            const removeBtn = document.createElement('button');
+            removeBtn.innerText = '✖';
+            removeBtn.className = 'remove-btn';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (side === 'left') cableStates[cableId].leftDevice = null;
+                else cableStates[cableId].rightDevice = null;
+                renderAll();
+                autoSaveAndUpdate();
+            });
+            placeholder.appendChild(deviceImg);
+            placeholder.appendChild(deviceName);
+            placeholder.appendChild(removeBtn);
+        } else {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-hint';
+            emptyDiv.innerText = '⬅️ Перетащи';
+            placeholder.appendChild(emptyDiv);
+        }
+
+        endpoint.appendChild(placeholder);
+
+        endpoint.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            endpoint.classList.add('drag-over');
+        });
+        endpoint.addEventListener('dragleave', () => {
+            endpoint.classList.remove('drag-over');
+        });
+        endpoint.addEventListener('drop', (e) => {
+            e.preventDefault();
+            endpoint.classList.remove('drag-over');
+            const dragData = e.dataTransfer.getData('text/plain');
+            if (!dragData) return;
+            try {
+                const { device } = JSON.parse(dragData);
+                if (device !== 'computer' && device !== 'switch') return;
+                if (side === 'left') cableStates[cableId].leftDevice = device;
+                else cableStates[cableId].rightDevice = device;
+                renderAll();
+                autoSaveAndUpdate();
+            } catch(err) {}
+        });
+        return endpoint;
+    }
+
+    // ========== ПУЛ УСТРОЙСТВ ==========
+    function renderDevicesPool() {
+        // Очищаем, оставляя только заголовок
+        const existing = devicesPool.querySelectorAll('.drag-device');
+        existing.forEach(el => el.remove());
+
+        const computer = createDragDevice('computer', '🖥️ Компьютер', 'компьютер.jpg');
+        const switchDevice = createDragDevice('switch', '🔌 Коммутатор', 'коммутатор.jpg');
+
+        devicesPool.appendChild(computer);
+        devicesPool.appendChild(switchDevice);
+    }
+
+    function createDragDevice(type, label, imgSrc) {
+        const dragEl = document.createElement('div');
+        dragEl.className = 'drag-device';
+        dragEl.setAttribute('draggable', 'true');
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.onerror = () => { img.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'30\' height=\'30\'%3E%3Crect width=\'30\' height=\'30\' fill=\'%23fef9e6\'/%3E%3Ctext x=\'6\' y=\'20\' fill=\'%238a6d1e\' font-size=\'10\' font-weight=\'bold\'%3E' + (type === 'computer' ? 'ПК' : 'SW') + '%3C/text%3E%3C/svg%3E'; };
+        const span = document.createElement('span');
+        span.innerText = label;
+        dragEl.appendChild(img);
+        dragEl.appendChild(span);
+        dragEl.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', JSON.stringify({ device: type }));
+            e.dataTransfer.effectAllowed = 'move';
+            dragEl.classList.add('dragging');
+        });
+        dragEl.addEventListener('dragend', () => dragEl.classList.remove('dragging'));
+        return dragEl;
+    }
+
+    // ========== ОБЩИЙ РЕНДЕР ==========
+    function renderAll() {
+        container.innerHTML = '';
+        cableTypes.forEach(cable => {
+            const card = renderCable(cable);
+            container.appendChild(card);
+        });
+        renderDevicesPool();
+    }
+
+    // ========== СБРОС ==========
+    function resetLocal() {
+        if (confirm('Сбросить весь прогресс этого задания? Восстановить будет невозможно.')) {
+            cableStates = {
+                straightA: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+                straightB: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+                crossover: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" }
+            };
+            renderAll();
+            autoSaveAndUpdate();
+            globalFeedbackDiv.innerHTML = "🔄 Все данные сброшены. Вы можете начать заново.";
+            globalFeedbackDiv.className = 'feedback info';
+        }
+    }
+
+    function saveAndGoHome() {
+        autoSaveAndUpdate();
+        window.location.href = "главная.html";
+    }
+
+    // ========== МОДАЛЬНОЕ ОКНО ==========
+    const imageModal = document.getElementById('imageModal');
+    const imageModalClose = document.getElementById('imageModalClose');
+    const imageModalTitle = document.getElementById('imageModalTitle');
+    const modalImage = document.getElementById('modalImage');
+
+    function openImageModal(imgSrc, title) {
+        modalImage.src = imgSrc;
+        imageModalTitle.innerText = title || 'Кабель';
+        imageModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeImageModal() {
+        imageModal.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(() => { modalImage.src = ''; }, 250);
+    }
+    imageModalClose.addEventListener('click', closeImageModal);
+    imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) closeImageModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && imageModal.classList.contains('active')) closeImageModal();
+    });
+
+    // ========== АВТОМАСШТАБИРОВАНИЕ ==========
+    function fitContainer() {
+        const viewport = document.getElementById('viewport');
+        const container = document.getElementById('container');
+        if (!viewport || !container) return;
+        container.style.transform = 'scale(1)';
+        const availWidth = viewport.clientWidth;
+        const contWidth = container.offsetWidth;
+        let scale = 1;
+        if (contWidth > availWidth) scale = availWidth / contWidth;
+        container.style.transform = `scale(${scale})`;
+        container.style.height = (100 / scale) + '%';
+        container.style.width = (100 / scale) + '%';
+        container.style.maxWidth = (1400 / scale) + 'px';
+    }
+
+    // ========== ГЛОБАЛЬНЫЙ СБРОС ==========
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'GLOBAL_RESET_TRIGGER') {
+            localStorage.removeItem(PROGRESS_KEY);
+            localStorage.removeItem(STATE_KEY);
+            cableStates = {
+                straightA: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+                straightB: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" },
+                crossover: { leftDevice: null, rightDevice: null, selectedType: "", selectedStd: "" }
+            };
+            renderAll();
+            updateProgressUI();
+            globalFeedbackDiv.innerHTML = "📌 Глобальный сброс выполнен. Данные очищены.";
+            globalFeedbackDiv.className = 'feedback info';
+        }
+    });
+
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    function init() {
+        loadSavedState();
+        renderAll();
+        autoSaveAndUpdate();
+        document.getElementById('resetLocalBtn').addEventListener('click', resetLocal);
+        document.getElementById('saveAndGoHomeBtn').addEventListener('click', saveAndGoHome);
+        fitContainer();
+    }
+
+    window.addEventListener('load', () => {
+        init();
+        setTimeout(fitContainer, 200);
+        setTimeout(fitContainer, 600);
+    });
+    window.addEventListener('resize', fitContainer);
+    window.addEventListener('pageshow', () => { fitContainer(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) fitContainer(); });
+</script>
+</body>
+</html>
